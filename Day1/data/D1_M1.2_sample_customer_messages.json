@@ -1,0 +1,12 @@
+[
+  {"id": 1, "message": "Hi, my debit card was declined twice today even though I have money in my account. This is urgent, I need to pay rent this afternoon."},
+  {"id": 2, "message": "I noticed a transaction on my credit card statement for $340 that I did not make. Please look into this immediately."},
+  {"id": 3, "message": "Can you tell me what documents I need to apply for a personal loan of around 5 lakhs?"},
+  {"id": 4, "message": "I've been trying to log into my savings account app for two days and it keeps saying invalid password even after I reset it."},
+  {"id": 5, "message": "What are the current interest rates for a 20-year home loan?"},
+  {"id": 6, "message": "Your customer service kept me on hold for 45 minutes yesterday and then the call dropped. I'm extremely unhappy with this experience."},
+  {"id": 7, "message": "I want to increase the credit limit on my Meridian Platinum card, is that something I can request online?"},
+  {"id": 8, "message": "My mother passed away last month and had a savings account with you. What is the process to close the account?"},
+  {"id": 9, "message": "Someone called claiming to be from Meridian Bank asking for my card PIN over the phone. I didn't give it but wanted to report this."},
+  {"id": 10, "message": "Just wanted to check my current savings account balance and recent transactions from the last week."}
+]

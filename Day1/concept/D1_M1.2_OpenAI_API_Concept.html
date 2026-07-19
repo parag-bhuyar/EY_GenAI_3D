@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 1 — Building on the OpenAI API | EY GenAI Programme</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0B1220;--card:#141D30;--card2:#1A2438;--accent:#C9A44C;--accent2:#3E7CB1;--white:#FFFFFF;--text:#C3CCDA;--dim:#8091A8;--danger:#EF4444;--warn:#F59E0B;--success:#10B981;--border:#22304A}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:17px;line-height:1.6;overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(11,18,32,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;gap:4px;overflow-x:auto}
+.nav-pill{flex-shrink:0;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;color:var(--dim);text-decoration:none;transition:.2s;border:1px solid transparent;cursor:pointer}
+.nav-pill:hover,.nav-pill.active{background:var(--accent)20;color:var(--accent);border-color:var(--accent)40}
+.nav-brand{font-size:13px;font-weight:800;color:var(--accent);margin-right:16px;white-space:nowrap;flex-shrink:0}
+.nav-prog{margin-left:auto;font-size:11px;color:var(--dim);flex-shrink:0;white-space:nowrap}
+.section{min-height:100vh;padding:80px 48px 48px;display:flex;flex-direction:column;justify-content:center;border-bottom:1px solid var(--border)}
+.section-label{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:12px}
+.section-title{font-size:34px;font-weight:800;color:var(--white);margin-bottom:8px;line-height:1.2}
+.section-sub{font-size:17px;color:var(--dim);margin-bottom:32px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px}
+.card-grid{display:grid;gap:16px}
+.card-grid-2{grid-template-columns:1fr 1fr}
+@media(max-width:900px){.card-grid-2{grid-template-columns:1fr}}
+.accent-bar{width:40px;height:3px;background:var(--accent);border-radius:2px;margin-bottom:12px}
+.data-table{width:100%;border-collapse:collapse}
+.data-table th{background:#0F1A2E;color:var(--accent);font-size:13px;font-weight:700;padding:12px 16px;text-align:left}
+.data-table td{padding:11px 16px;font-size:14px;border-bottom:1px solid var(--border)}
+.data-table tr:nth-child(even) td{background:var(--card2)}
+.accordion-item{border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden}
+.accordion-header{padding:16px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600;color:var(--white);background:var(--card);transition:.2s}
+.accordion-header:hover{background:var(--card2)}
+.accordion-body{padding:0 20px;max-height:0;overflow:hidden;transition:max-height .3s,padding .3s}
+.accordion-body.open{max-height:600px;padding:16px 20px}
+.chevron{transition:.3s;color:var(--accent)}
+.chevron.open{transform:rotate(180deg)}
+.code-block{background:#080D18;border:1px solid var(--border);border-radius:6px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);white-space:pre-wrap;margin:8px 0}
+.danger-block{background:var(--danger)10;border:1px solid var(--danger)30;border-radius:6px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#FCA5A5;white-space:pre-wrap;margin:8px 0}
+.toggle-wrap{display:flex;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;width:fit-content;margin-bottom:24px}
+.toggle-btn{padding:12px 28px;font-size:14px;font-weight:700;border:none;cursor:pointer;transition:.2s}
+.toggle-btn.active{background:var(--accent);color:#1a1300}
+.toggle-btn:not(.active){background:var(--card);color:var(--dim)}
+.selfcheck{background:#3E7CB112;border:1px solid #3E7CB14D;border-radius:10px;padding:18px 20px;margin:20px 0}
+.selfcheck-q{font-size:15px;color:#8FC0E8;margin-bottom:12px;font-weight:600;line-height:1.5}
+.selfcheck-btn{font-size:13px;background:#3E7CB126;border:1px solid #3E7CB166;color:#8FC0E8;border-radius:6px;padding:8px 16px;cursor:pointer;font-weight:600}
+.selfcheck-ans{display:none;margin-top:14px;padding-top:14px;border-top:1px solid #3E7CB133;font-size:14px;color:var(--text);line-height:1.65}
+.selfcheck-ans.show{display:block}
+.quiz-marker{background:#C9A44C1A;border:1px solid #C9A44C59;border-radius:10px;padding:16px 22px;margin:26px 0;display:flex;align-items:center;gap:16px}
+.quiz-title{font-size:14px;font-weight:700;color:var(--accent)}
+.quiz-desc{font-size:12.5px;color:var(--dim);margin-top:3px}
+.hero-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:32px}
+@media(max-width:900px){.hero-grid{grid-template-columns:repeat(2,1fr)}}
+.hero-tile{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:.2s;text-decoration:none}
+.hero-tile:hover{border-color:var(--accent);transform:translateY(-3px)}
+.hero-tile-num{font-size:11px;font-weight:700;color:var(--accent)}
+.hero-tile-label{font-size:14px;font-weight:600;color:var(--white);margin-top:4px}
+.lab-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px 28px;margin-bottom:18px}
+.lab-badge{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:var(--accent)1A;color:var(--accent);border:1px solid var(--accent)4D;border-radius:4px;padding:4px 11px;display:inline-block;margin-bottom:14px}
+.lab-card h3{font-size:21px;font-weight:800;color:var(--white);margin-bottom:8px}
+.lab-card .desc{font-size:15px;color:var(--text);margin-bottom:16px;line-height:1.65}
+.lab-tasks{padding-left:20px;font-size:14.5px;color:var(--text)}
+.lab-tasks li{margin-bottom:8px;line-height:1.6}
+.capstone-note{display:inline-block;font-size:12.5px;color:var(--accent);border:1px solid var(--accent)4D;border-radius:6px;padding:8px 14px;margin:12px 0}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .4s ease}
+</style>
+</head>
+<body>
+
+<nav id="main-nav">
+  <span class="nav-brand">🏦 EY GenAI · Day 1</span>
+  <a class="nav-pill active" href="#s1">Mission</a>
+  <a class="nav-pill" href="#s2">SDK &amp; Setup</a>
+  <a class="nav-pill" href="#s3">Streaming</a>
+  <a class="nav-pill" href="#s4">Structured Outputs</a>
+  <a class="nav-pill" href="#s5">Tool Calling</a>
+  <a class="nav-pill" href="#s6">Robustness</a>
+  <a class="nav-pill" href="#labs">Lab</a>
+  <span class="nav-prog" id="nav-prog">Section 1 / 7</span>
+</nav>
+
+<section class="section" id="s1" style="background:radial-gradient(ellipse at 60% 40%,#C9A44C08 0%,transparent 60%)">
+  <div class="section-label">Day 1 · Module 1.2</div>
+  <div class="section-title">Building on the OpenAI API</div>
+  <div class="section-sub">M1.1 showed you how the model behaves. This module is where you start building something Meridian Retail Bank could actually put in front of a customer — reliably.</div>
+  <div class="card" style="max-width:760px">
+    <p style="font-size:15px;line-height:1.7">Everything downstream — Day 2's RAG pipeline, Day 3's agents — is built out of the same handful of primitives you'll use today: streaming, structured outputs, and tool calling, wrapped in enough error handling that a flaky network call doesn't take down a production flow. Today's lab produces a structured-extraction module that becomes <strong style="color:var(--accent)">Capstone Phase 1</strong> — not a throwaway exercise.</p>
+  </div>
+  <div class="hero-grid">
+    <a class="hero-tile" href="#s2"><div class="hero-tile-num">S2</div><div class="hero-tile-label">SDK &amp; Setup</div></a>
+    <a class="hero-tile" href="#s3"><div class="hero-tile-num">S3</div><div class="hero-tile-label">Streaming</div></a>
+    <a class="hero-tile" href="#s4"><div class="hero-tile-num">S4</div><div class="hero-tile-label">Structured Outputs</div></a>
+    <a class="hero-tile" href="#s5"><div class="hero-tile-num">S5</div><div class="hero-tile-label">Tool Calling</div></a>
+    <a class="hero-tile" href="#s6"><div class="hero-tile-num">S6</div><div class="hero-tile-label">Robustness</div></a>
+    <a class="hero-tile" href="#labs"><div class="hero-tile-num">Lab</div><div class="hero-tile-label">Your Mission</div></a>
+  </div>
+</section>
+
+<section class="section" id="s2">
+  <div class="section-label">Unit 1</div>
+  <div class="section-title">SDK Setup, Auth &amp; Environment Hygiene</div>
+  <div class="section-sub">The unglamorous part that determines whether anything else in this programme actually runs.</div>
+  <div class="card-grid card-grid-2" style="margin-bottom:20px">
+    <div class="card">
+      <div class="accent-bar"></div>
+      <h4 style="color:var(--white);margin-bottom:8px">Never hard-code a key</h4>
+      <p style="font-size:14px;line-height:1.65">Your API key goes in an environment variable, read at runtime — never typed into a notebook cell, never committed to git. Every lab in this programme, starting with M1.1, assumes <code style="color:var(--accent)">OPENAI_API_KEY</code> is already set in your shell before you open anything.</p>
+    </div>
+    <div class="card">
+      <div class="accent-bar"></div>
+      <h4 style="color:var(--white);margin-bottom:8px">Fail loudly if the key's missing</h4>
+      <p style="font-size:14px;line-height:1.65">Today's starter code asserts the key exists before doing anything else. That's deliberate — a script that silently proceeds and fails 30 seconds later on the actual API call wastes far more of your time than one that stops immediately with a clear message.</p>
+    </div>
+  </div>
+  <div class="danger-block">✗ client = OpenAI(api_key="sk-abc123...")   ← never do this
+✓ client = OpenAI()   ← reads OPENAI_API_KEY from the environment automatically</div>
+</section>
+
+<section class="section" id="s3">
+  <div class="section-label">Unit 2</div>
+  <div class="section-title">Streaming Responses</div>
+  <div class="section-sub">Why a chat UI doesn't wait for the whole answer before showing anything.</div>
+  <div class="card-grid card-grid-2">
+    <div class="card">
+      <h4 style="color:var(--white);margin-bottom:8px">Non-streaming</h4>
+      <p style="font-size:14px;line-height:1.65">The call blocks until the entire response is generated, then returns it all at once. Simpler to write, but for a long response the user stares at a blank screen the whole time.</p>
+      <div class="code-block">response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[...],
+)
+print(response.choices[0].message.content)</div>
+    </div>
+    <div class="card">
+      <h4 style="color:var(--white);margin-bottom:8px">Streaming</h4>
+      <p style="font-size:14px;line-height:1.65">The same call, but tokens arrive incrementally as they're generated — the classic "typing" effect. Requires handling partial chunks instead of one clean object.</p>
+      <div class="code-block">stream = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[...],
+    stream=True,
+)
+for chunk in stream:
+    delta = chunk.choices[0].delta.content
+    if delta:
+        print(delta, end="")</div>
+    </div>
+  </div>
+  <div class="selfcheck">
+    <div class="selfcheck-q">🧠 Today's structured-extraction lab uses tool calling, not streaming. Why doesn't streaming make sense there?</div>
+    <button class="selfcheck-btn" onclick="toggleCheck(this)">Reveal answer ↓</button>
+    <div class="selfcheck-ans">Structured extraction needs one complete, valid JSON object before it's useful — a partially-streamed JSON fragment can't be validated or parsed mid-stream. Streaming is for improving perceived latency on free-text responses a human is reading live; it doesn't help when the consumer is your own validation code waiting for a complete structured object.</div>
+  </div>
+</section>
+
+<section class="section" id="s4">
+  <div class="section-label">Unit 3</div>
+  <div class="section-title">Structured Outputs: JSON Mode &amp; Schemas</div>
+  <div class="section-sub">Getting the model to return something your code can parse reliably, every time — not just most of the time.</div>
+  <div class="card">
+    <h4 style="color:var(--white);margin-bottom:10px">Two ways to get structure out of a chat model</h4>
+    <table class="data-table">
+      <tr><th>Approach</th><th>What it guarantees</th><th>Used in this programme for</th></tr>
+      <tr><td>JSON mode / response schema</td><td>Output is valid JSON matching a schema you provide</td><td>Simple single-shot structured answers</td></tr>
+      <tr><td>Tool / function calling</td><td>Output is a structured call to a named "tool" you define, with typed arguments</td><td>Today's extraction lab, and every agent from Day 2 onward</td></tr>
+    </table>
+    <p style="font-size:13.5px;color:var(--dim);margin-top:12px">This programme standardises on tool calling for structured extraction specifically because the exact same mechanism is what agents use to call real tools later — you're learning one pattern that scales forward, not two separate ones.</p>
+  </div>
+</section>
+
+<section class="section" id="s5">
+  <div class="section-label">Unit 4</div>
+  <div class="section-title">Function / Tool Calling</div>
+  <div class="section-sub">Defining a tool schema and routing the model's tool call — today's lab, end to end.</div>
+  <div id="tool-accordion" style="margin-bottom:24px"></div>
+  <div class="card">
+    <h4 style="color:var(--white);margin-bottom:10px">The three-step loop</h4>
+    <ol style="padding-left:20px;font-size:14px;line-height:1.9">
+      <li>Send the message with <code style="color:var(--accent)">tools=[...]</code> and (usually) <code style="color:var(--accent)">tool_choice</code> forcing a specific tool</li>
+      <li>The model returns a tool call with a JSON arguments string instead of plain text</li>
+      <li>Your code parses and <strong style="color:var(--accent)">validates</strong> those arguments — never trust them blindly, the model can still return a malformed or out-of-schema value</li>
+    </ol>
+  </div>
+</section>
+
+<section class="section" id="s6">
+  <div class="section-label">Unit 5</div>
+  <div class="section-title">Robustness: Retries, Timeouts &amp; Rate Limits</div>
+  <div class="section-sub">The difference between a lab exercise and something you'd trust in production.</div>
+  <div class="card-grid card-grid-2">
+    <div class="card">
+      <h4 style="color:var(--white);margin-bottom:8px">What can go wrong on a real call</h4>
+      <p style="font-size:14px;line-height:1.65">A network blip. A rate limit during a busy period. The model returning a tool call with a value outside your schema's allowed options — this last one is a validation failure, not a network failure, and today's lab specifically builds a retry loop for exactly this case.</p>
+    </div>
+    <div class="card">
+      <h4 style="color:var(--white);margin-bottom:8px">Retry ≠ retry forever</h4>
+      <p style="font-size:14px;line-height:1.65">A bounded retry count with backoff, then a clear failure — never a silent infinite loop, and never a failure that just returns garbage instead of raising. Today's lab's <code style="color:var(--accent)">max_retries</code> parameter and final <code style="color:var(--accent)">RuntimeError</code> are the minimum viable version of this pattern.</p>
+    </div>
+  </div>
+  <div class="capstone-note">🏦 Capstone Phase 1: this lab's extraction module is the actual Meridian Retail Bank structured-extraction component — see Capstone_Meridian_Retail_Bank/docs/</div>
+</section>
+
+<div class="quiz-marker fade-in" style="max-width:900px;margin-left:48px">
+  <div>
+    <div class="quiz-title">📊 AhaSlides — Live Checkpoint · After M1.2</div>
+    <div class="quiz-desc">Live-session reinforcement, run by the trainer. M1.2's actual Assessment Method is the graded lab (autograder) below, not this checkpoint.</div>
+  </div>
+</div>
+
+<section class="section" id="labs" style="align-items:stretch;min-height:auto;padding-top:64px">
+  <div class="section-label">Your Lab</div>
+  <div class="section-title">Structured-Extraction Module</div>
+  <div class="section-sub">Individual · autograded · becomes Capstone Phase 1 · full instructions in the lab README</div>
+
+  <div class="lab-card fade-in">
+    <span class="lab-badge">M1.2 · Individual · Autograded</span>
+    <h3>Extract structured records from customer messages, reliably</h3>
+    <p class="desc">Fill in a tool schema and an extraction function with retry-on-validation-failure, then run it against 10 real Meridian Retail Bank customer messages.</p>
+    <ul class="lab-tasks">
+      <li>Define the tool's JSON-schema <code style="background:#080D18;padding:1px 5px;border-radius:4px;color:var(--accent)">parameters</code> to match the <code style="background:#080D18;padding:1px 5px;border-radius:4px;color:var(--accent)">CustomerRequest</code> schema</li>
+      <li>Implement <code style="background:#080D18;padding:1px 5px;border-radius:4px;color:var(--accent)">extract_customer_request</code> with tool calling + Pydantic validation</li>
+      <li>Add a bounded retry loop for validation failures</li>
+      <li>Pass the autograder on at least 8 of 10 sample messages</li>
+    </ul>
+    <p style="font-size:13.5px;color:var(--dim);margin-top:14px">Full steps: <code style="background:#080D18;padding:2px 6px;border-radius:4px;color:var(--accent)">Day1/labs/readme/D1_M1.2_OpenAI_API_README.md</code> · Starter: <code style="background:#080D18;padding:2px 6px;border-radius:4px;color:var(--accent)">Day1/labs/starter/D1_M1.2_OpenAI_API_Starter.py</code></p>
+  </div>
+</section>
+
+<script>
+const TOOL_STEPS = [
+  {el:"1. Define the tool schema", def:"A JSON-schema description of the function's name, description, and parameters (with types, enums, and which fields are required). This is what the model reads to know what it's allowed to call and how.", ex:'{"type":"function","function":{"name":"extract_customer_request","parameters":{"type":"object","properties":{...},"required":[...]}}}'},
+  {el:"2. Force or allow the tool call", def:"tool_choice can force a specific tool (right choice for extraction — you always want it called), or be left to 'auto' so the model decides whether and which tool to call (right choice once an agent has multiple real tools, from Day 2 onward).", ex:'tool_choice={"type":"function","function":{"name":"extract_customer_request"}}'},
+  {el:"3. Parse and validate the arguments", def:"The model's tool call arguments arrive as a JSON string, not a guaranteed-valid object. Parse it with json.loads, then validate against your schema (Pydantic in this lab) before trusting a single field.", ex:'parsed = json.loads(tool_call.function.arguments)\nrecord = CustomerRequest(**parsed)  # raises ValidationError if malformed'},
+];
+function renderTool(){
+  document.getElementById('tool-accordion').innerHTML = TOOL_STEPS.map((f,i)=>`
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAcc(this)">
+        <span>${f.el}</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="accordion-body">
+        <p style="font-size:14px;color:var(--text);margin-bottom:8px">${f.def}</p>
+        <div class="code-block">${f.ex}</div>
+      </div>
+    </div>`).join('');
+}
+function toggleCheck(btn){
+  const ans = btn.nextElementSibling;
+  ans.classList.toggle('show');
+  btn.textContent = ans.classList.contains('show') ? 'Hide answer ↑' : 'Reveal answer ↓';
+}
+function toggleAcc(header){
+  const body=header.nextElementSibling;
+  const chev=header.querySelector('.chevron');
+  body.classList.toggle('open');
+  chev.classList.toggle('open');
+}
+function initNav(){
+  const pills = document.querySelectorAll('.nav-pill');
+  const sections = document.querySelectorAll('.section');
+  const prog = document.getElementById('nav-prog');
+  const obs = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const id = e.target.id;
+        pills.forEach(p=>p.classList.toggle('active',p.getAttribute('href')==='#'+id));
+        const idx = Array.from(sections).findIndex(s=>s.id===id);
+        prog.textContent = `Section ${idx+1} / ${sections.length}`;
+      }
+    });
+  },{threshold:0.4});
+  sections.forEach(s=>obs.observe(s));
+}
+function init(){
+  initNav();
+  renderTool();
+}
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
