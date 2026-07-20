@@ -275,12 +275,12 @@ for chunk in stream:
   <div class="lab-card fade-in">
     <span class="lab-badge">M1.2 · Individual · Autograded</span>
     <h3>Extract structured records from customer messages, reliably</h3>
-    <p class="desc">Fill in a tool schema and an extraction function with retry-on-validation-failure, then run it against 10 real Meridian Retail Bank customer messages.</p>
+    <p class="desc">The starter file already contains a fully working tool schema and extraction function with retry-on-validation-failure. Read it, run it, and understand it — then run it against 10 real Meridian Retail Bank customer messages.</p>
     <ul class="lab-tasks">
-      <li>Define the tool's JSON-schema <code style="background:#080D18;padding:1px 5px;border-radius:4px;color:var(--accent)">parameters</code> to match the <code style="background:#080D18;padding:1px 5px;border-radius:4px;color:var(--accent)">CustomerRequest</code> schema</li>
-      <li>Implement <code style="background:#080D18;padding:1px 5px;border-radius:4px;color:var(--accent)">extract_customer_request</code> with tool calling + Pydantic validation</li>
-      <li>Add a bounded retry loop for validation failures</li>
-      <li>Pass the autograder on at least 8 of 10 sample messages</li>
+      <li>Read how the tool's JSON-schema <code style="background:#080D18;padding:1px 5px;border-radius:4px;color:var(--accent)">parameters</code> maps to the <code style="background:#080D18;padding:1px 5px;border-radius:4px;color:var(--accent)">CustomerRequest</code> schema</li>
+      <li>Read <code style="background:#080D18;padding:1px 5px;border-radius:4px;color:var(--accent)">extract_customer_request</code> — tool calling + Pydantic validation, line by line</li>
+      <li>Understand the bounded retry loop that recovers from a validation failure</li>
+      <li>Run the autograder and pass on at least 8 of 10 sample messages</li>
     </ul>
     <p style="font-size:13.5px;color:var(--dim);margin-top:14px">Full steps: <code style="background:#080D18;padding:2px 6px;border-radius:4px;color:var(--accent)">Day1/labs/readme/D1_M1.2_OpenAI_API_README.md</code> · Starter: <code style="background:#080D18;padding:2px 6px;border-radius:4px;color:var(--accent)">Day1/labs/starter/D1_M1.2_OpenAI_API_Starter.py</code></p>
   </div>

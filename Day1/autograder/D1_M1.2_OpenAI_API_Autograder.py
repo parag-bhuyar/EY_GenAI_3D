@@ -114,10 +114,6 @@ def main():
 
     try:
         mod = load_module(student_path)
-    except NotImplementedError:
-        fail(["extract_customer_request raised NotImplementedError — the TODOs in "
-              f"{STARTER_FILENAME} haven't been filled in yet."])
-        return
     except Exception as e:
         fail([f"Student module failed to import: {type(e).__name__}: {e}"])
         return
@@ -149,10 +145,6 @@ def main():
                 errors.append(f"id {item['id']}: did not return a CustomerRequest instance")
                 continue
             passed += 1
-        except NotImplementedError:
-            fail([f"extract_customer_request raised NotImplementedError — the TODOs in "
-                  f"{STARTER_FILENAME} haven't been filled in yet."])
-            return
         except Exception as e:
             errors.append(f"id {item['id']}: {type(e).__name__}: {e}")
 

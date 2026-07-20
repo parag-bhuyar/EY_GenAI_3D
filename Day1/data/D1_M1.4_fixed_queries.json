@@ -1,0 +1,7 @@
+[
+  {"id": 1, "query": "My card was stolen, what should I do?", "expected_top_id": 1},
+  {"id": 2, "query": "What interest do I earn on my savings?", "expected_top_id": 2},
+  {"id": 3, "query": "How do I get a higher spending limit on my credit card?", "expected_top_id": 3},
+  {"id": 4, "query": "Someone used my account without my permission.", "expected_top_id": 8},
+  {"id": 5, "query": "How much cash can I take out from the machine per day?", "expected_top_id": 5}
+]
