@@ -1,2 +1,6 @@
 import sys
    !{sys.executable} -m pip install --quiet openai python-dotenv pydantic
+
+---------------
+2)
+import sys, subprocess; r = subprocess.run([sys.executable, "-m", "pip", "install", "openai", "python-dotenv", "pydantic"], capture_output=True, text=True); print(r.returncode); print(r.stdout[-1500:]); print(r.stderr[-1500:])
