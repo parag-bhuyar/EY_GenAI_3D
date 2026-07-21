@@ -30,6 +30,13 @@ chat, Slack, WhatsApp, or forum. It is like a password.**
    ```
    No quotes, no spaces around the `=`. Save the file.
 
+**One file for all three days.** You create this `.env` once, in `Day1/labs/starter/`. Every
+notebook on Day 2 and Day 3 searches for it automatically — you never need to copy it into another
+folder. If you prefer, you can instead put it at the top level of the repo (next to `SETUP.md`) and
+that works too.
+
+---
+
 ## Step 3 — Install one extra package
 
 Open a terminal in VS Code (View → Terminal) and run:

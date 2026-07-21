@@ -1,0 +1,42 @@
+[
+  {
+    "query": "My salary hasn't arrived.",
+    "gold_id": 1
+  },
+  {
+    "query": "My paycheck is missing.",
+    "gold_id": 1
+  },
+  {
+    "query": "I think my employer transferred the money but I don't see it.",
+    "gold_id": 1
+  },
+  {
+    "query": "Salary credit is delayed again this month.",
+    "gold_id": 1
+  },
+  {
+    "query": "NEFT transfer not received.",
+    "gold_id": 3
+  },
+  {
+    "query": "Status of TXN-99213?",
+    "gold_id": 8
+  },
+  {
+    "query": "Is there a minimum balance on my salary account?",
+    "gold_id": 5
+  },
+  {
+    "query": "Can I send money on a Sunday?",
+    "gold_id": 4
+  },
+  {
+    "query": "Someone made a payment from my account that I did not do.",
+    "gold_id": 30
+  },
+  {
+    "query": "How long does a failed UPI refund take?",
+    "gold_id": 6
+  }
+]
