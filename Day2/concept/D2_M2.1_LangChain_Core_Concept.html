@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 2 — LangChain 1.0 Core | EY GenAI Programme</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0B1220;--card:#141D30;--card2:#1A2438;--accent:#C9A44C;--accent2:#3E7CB1;--white:#FFFFFF;--text:#C3CCDA;--dim:#8091A8;--danger:#EF4444;--warn:#F59E0B;--success:#10B981;--border:#22304A}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:17px;line-height:1.6;overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(11,18,32,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;gap:4px;overflow-x:auto}
+.nav-pill{flex-shrink:0;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;color:var(--dim);text-decoration:none;transition:.2s;border:1px solid transparent;cursor:pointer}
+.nav-pill:hover,.nav-pill.active{background:var(--accent)20;color:var(--accent);border-color:var(--accent)40}
+.nav-brand{font-size:13px;font-weight:800;color:var(--accent);margin-right:16px;white-space:nowrap;flex-shrink:0}
+.nav-prog{margin-left:auto;font-size:11px;color:var(--dim);flex-shrink:0;white-space:nowrap}
+.section{min-height:100vh;padding:80px 48px 48px;display:flex;flex-direction:column;justify-content:center;border-bottom:1px solid var(--border)}
+.section-label{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:12px}
+.section-title{font-size:34px;font-weight:800;color:var(--white);margin-bottom:8px;line-height:1.2}
+.section-sub{font-size:17px;color:var(--dim);margin-bottom:32px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px}
+.card-grid{display:grid;gap:16px}
+.card-grid-2{grid-template-columns:1fr 1fr}
+.card-grid-3{grid-template-columns:1fr 1fr 1fr}
+@media(max-width:900px){.card-grid-2,.card-grid-3{grid-template-columns:1fr}}
+.accent-bar{width:40px;height:3px;background:var(--accent);border-radius:2px;margin-bottom:12px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:8px;font-size:15px;font-weight:600;border:none;cursor:pointer;transition:.2s}
+.btn-primary{background:var(--accent);color:#1a1300}
+.btn-primary:hover{background:#DDBB63}
+.btn-ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)60}
+.btn-ghost:hover{background:var(--accent)15}
+.btn-toggle{background:var(--card2);color:var(--text);border:1px solid var(--border)}
+.btn-toggle.active{background:var(--accent2)25;color:#8FC0E8;border-color:var(--accent2)}
+.btn-sm{padding:8px 16px;font-size:13px}
+.data-table{width:100%;border-collapse:collapse}
+.data-table th{background:#0F1A2E;color:var(--accent);font-size:13px;font-weight:700;padding:12px 16px;text-align:left}
+.data-table td{padding:11px 16px;font-size:14px;border-bottom:1px solid var(--border)}
+.data-table tr:nth-child(even) td{background:var(--card2)}
+.code-block{background:#080D18;border:1px solid var(--border);border-radius:6px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--accent);white-space:pre-wrap;margin:8px 0;line-height:1.6}
+.code-line-highlight{background:var(--accent2)30;display:inline-block;width:100%}
+.selfcheck{background:#3E7CB112;border:1px solid #3E7CB14D;border-radius:10px;padding:18px 20px;margin:20px 0}
+.selfcheck-q{font-size:15px;color:#8FC0E8;margin-bottom:12px;font-weight:600;line-height:1.5}
+.selfcheck-btn{font-size:13px;background:#3E7CB126;border:1px solid #3E7CB166;color:#8FC0E8;border-radius:6px;padding:8px 16px;cursor:pointer;font-weight:600}
+.selfcheck-ans{display:none;margin-top:14px;padding-top:14px;border-top:1px solid #3E7CB133;font-size:14px;color:var(--text);line-height:1.65}
+.selfcheck-ans.show{display:block}
+.hero-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:32px}
+@media(max-width:900px){.hero-grid{grid-template-columns:repeat(2,1fr)}}
+.hero-tile{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:.2s;text-decoration:none}
+.hero-tile:hover{border-color:var(--accent);transform:translateY(-3px)}
+.hero-tile-num{font-size:11px;font-weight:700;color:var(--accent)}
+.hero-tile-label{font-size:14px;font-weight:600;color:var(--white);margin-top:4px}
+.lab-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px 28px;margin-bottom:18px}
+.lab-badge{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:var(--accent)1A;color:var(--accent);border:1px solid var(--accent)4D;border-radius:4px;padding:4px 11px;display:inline-block;margin-bottom:14px}
+.lab-card h3{font-size:21px;font-weight:800;color:var(--white);margin-bottom:8px}
+.lab-card .desc{font-size:15px;color:var(--text);margin-bottom:16px;line-height:1.65}
+.lab-tasks{padding-left:20px;font-size:14.5px;color:var(--text)}
+.lab-tasks li{margin-bottom:8px;line-height:1.6}
+.ach-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+@media(max-width:700px){.ach-grid{grid-template-columns:1fr}}
+.ach-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center}
+.ach-icon{font-size:26px;margin-bottom:6px}
+.ach-name{font-size:14px;font-weight:700;color:var(--white);margin-bottom:3px}
+.ach-desc{font-size:12px;color:var(--dim)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .4s ease}
+.playground{background:linear-gradient(180deg,#1A2438,#141D30);border:1px solid var(--accent)40;border-radius:14px;padding:24px 26px;margin-bottom:20px}
+.pg-label{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.pg-title{font-size:18px;font-weight:800;color:var(--white);margin-bottom:14px}
+.pg-output{background:#080D18;border:1px solid var(--accent)40;border-radius:10px;padding:16px;margin-top:10px}
+/* lab-marker: interleaved "go do the lab now" cue — visually distinct from the AhaSlides checkpoint marker */
+.lab-marker{background:#3E7CB11A;border:1px solid #3E7CB159;border-radius:10px;padding:18px 22px;margin:26px 0;display:flex;align-items:center;gap:16px}
+.lab-marker-icon{font-size:26px;flex-shrink:0}
+.lab-marker-title{font-size:14px;font-weight:700;color:#8FC0E8}
+.lab-marker-desc{font-size:12.5px;color:var(--dim);margin-top:3px}
+.quiz-marker{background:#C9A44C1A;border:1px solid #C9A44C59;border-radius:10px;padding:16px 22px;margin:26px 0;display:flex;align-items:center;gap:16px}
+.quiz-marker-icon{font-size:22px;flex-shrink:0}
+.quiz-title{font-size:14px;font-weight:700;color:var(--accent)}
+.quiz-desc{font-size:12.5px;color:var(--dim);margin-top:3px}
+.step-chip{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--card2);border:1px solid var(--border);color:var(--dim);font-size:13px;font-weight:700;cursor:pointer;transition:.2s}
+.step-chip.active{background:var(--accent);color:#1a1300;border-color:var(--accent)}
+.step-chip.done{background:var(--accent2)40;color:#8FC0E8;border-color:var(--accent2)}
+.linecount-num{font-size:38px;font-weight:800;color:var(--accent);font-family:'JetBrains Mono',monospace}
+.agent-btn{display:block;width:100%;text-align:left;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:10px;cursor:pointer;font-size:14.5px;color:var(--white);transition:.2s}
+.agent-btn:hover{border-color:var(--accent2)}
+.agent-trace{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--text);line-height:1.9}
+.agent-trace .tool{color:var(--accent)}
+.agent-trace .direct{color:#8FC0E8}
+/* NEW — visual flow diagrams (Yesterday/Today, streaming-service analogy, etc.) */
+.flow-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0}
+.flow-box{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-size:13px;color:var(--text);font-family:'JetBrains Mono',monospace;white-space:nowrap}
+.flow-arrow{color:var(--accent);font-size:16px;font-weight:700}
+/* NEW — predict-then-reveal MCQ widget, used by every self-check on this page */
+.predict-options{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.predict-opt{background:var(--card2);color:var(--text);border:1px solid var(--border);padding:10px 18px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:.2s}
+.predict-opt:hover:not(:disabled){border-color:var(--accent2)}
+.predict-opt:disabled{cursor:default}
+.predict-correct{background:var(--success)30!important;border-color:var(--success)!important;color:#fff!important}
+.predict-wrong{background:var(--danger)30!important;border-color:var(--danger)!important;color:#fff!important}
+/* NEW — "ohhh" wow-moment callout */
+.wow-marker{background:var(--success)1A;border:1px solid var(--success)59;border-radius:10px;padding:16px 22px;margin:20px 0;display:flex;align-items:center;gap:16px}
+</style>
+</head>
+<body>
+
+<nav id="main-nav">
+  <span class="nav-brand">🏦 EY GenAI · Day 2</span>
+  <a class="nav-pill active" href="#s1">Mission</a>
+  <a class="nav-pill" href="#s0">Why LangChain?</a>
+  <a class="nav-pill" href="#s2">A · Swap AI Companies</a>
+  <a class="nav-pill" href="#s3">B · Build a Chain</a>
+  <a class="nav-pill" href="#s4">C · 20 Lines → 2</a>
+  <a class="nav-pill" href="#s5">D · Agent Decides</a>
+  <a class="nav-pill" href="#s6">Recap</a>
+  <a class="nav-pill" href="#labs">Lab</a>
+  <span class="nav-prog" id="nav-prog">Section 1 / 8</span>
+</nav>
+
+<!-- S1 HERO -->
+<section class="section" id="s1" style="background:radial-gradient(ellipse at 60% 40%,#C9A44C08 0%,transparent 60%)">
+  <div class="section-label">Day 2 · Module 2.1 · LangChain 1.0 Core</div>
+  <div class="section-title">Yesterday: 20 Lines. Today: 2.</div>
+  <div class="section-sub">Same job. Same result. Way less code. How? Keep reading — you're about to find out.</div>
+
+  <div class="card" style="max-width:760px">
+    <div class="flow-row">
+      <span style="font-size:11px;font-weight:700;color:var(--dim);letter-spacing:1px;width:78px;flex-shrink:0">YESTERDAY</span>
+      <div class="flow-box">Prompt</div><span class="flow-arrow">→</span>
+      <div class="flow-box">Call model</div><span class="flow-arrow">→</span>
+      <div class="flow-box">Check reply</div><span class="flow-arrow">→</span>
+      <div class="flow-box">Retry if broken</div><span class="flow-arrow">→</span>
+      <div class="flow-box">Print</div>
+    </div>
+    <div class="flow-row">
+      <span style="font-size:11px;font-weight:700;color:var(--accent);letter-spacing:1px;width:78px;flex-shrink:0">TODAY</span>
+      <div class="flow-box" style="border-color:var(--accent)">Prompt</div><span class="flow-arrow">→</span>
+      <div class="flow-box" style="border-color:var(--accent)">Chain</div><span class="flow-arrow">→</span>
+      <div class="flow-box" style="background:var(--accent)30;border-color:var(--accent);color:var(--white);font-weight:700">Done ✅</div>
+    </div>
+    <p style="font-size:13.5px;color:var(--dim);margin-top:10px">5 steps become 2 steps. You wrote every box on the "Yesterday" row yourself, in M1.2. Today, LangChain writes most of them for you.</p>
+  </div>
+
+  <div class="card" style="max-width:760px;margin-top:20px">
+    <p style="font-size:15px;line-height:1.7">One tip before you start. Don't read this whole page first. Read a small piece below. Then switch to VS Code and try it. Then come back for the next piece. You'll do this <strong style="color:var(--accent)">4 times</strong> today.</p>
+  </div>
+
+  <div class="card" style="max-width:760px;margin-top:20px">
+    <h4 style="color:var(--white);margin-bottom:10px">By the end of today, you can</h4>
+    <ul style="padding-left:20px;font-size:14.5px;color:var(--text);line-height:1.9">
+      <li>Switch AI companies by changing <strong style="color:var(--accent)">one line</strong>, not your whole app</li>
+      <li>Read a chain like <code style="color:var(--accent)">prompt | model | ...</code> and know what each piece does</li>
+      <li>Explain why 2 lines of LangChain replace 20 lines you wrote by hand</li>
+      <li>Watch an AI agent decide, by itself, whether it needs a tool</li>
+    </ul>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h4 style="color:var(--white);margin-bottom:14px">Where today fits in your 3 days</h4>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <div style="flex:1;min-width:140px;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px 12px">
+        <div style="font-size:10px;font-weight:700;color:var(--dim);letter-spacing:1px">DAY 1</div>
+        <div style="font-size:12.5px;color:var(--text);margin-top:4px">You wrote AI code by hand</div>
+      </div>
+      <div style="flex:1;min-width:140px;background:var(--accent)1A;border:1px solid var(--accent);border-radius:8px;padding:10px 12px">
+        <div style="font-size:10px;font-weight:700;color:var(--accent);letter-spacing:1px">DAY 2 · YOU ARE HERE</div>
+        <div style="font-size:12.5px;color:var(--white);margin-top:4px;font-weight:700">LangChain does the hard parts for you</div>
+      </div>
+      <div style="flex:1;min-width:140px;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px 12px">
+        <div style="font-size:10px;font-weight:700;color:var(--dim);letter-spacing:1px">DAY 3</div>
+        <div style="font-size:12.5px;color:var(--text);margin-top:4px">Agents that plan multiple steps</div>
+      </div>
+    </div>
+    <p style="font-size:12.5px;color:var(--dim);margin-top:12px">Today's code becomes part of your <strong style="color:var(--accent)">Capstone project</strong> — the real system you're building for Meridian Bank.</p>
+  </div>
+
+  <div class="hero-grid">
+    <a class="hero-tile" href="#s2"><div class="hero-tile-num">A</div><div class="hero-tile-label">Swap AI Companies</div></a>
+    <a class="hero-tile" href="#s3"><div class="hero-tile-num">B</div><div class="hero-tile-label">Build a Chain</div></a>
+    <a class="hero-tile" href="#s4"><div class="hero-tile-num">C</div><div class="hero-tile-label">20 Lines → 2</div></a>
+    <a class="hero-tile" href="#s5"><div class="hero-tile-num">D</div><div class="hero-tile-label">Agent Decides</div></a>
+    <a class="hero-tile" href="#labs"><div class="hero-tile-num">Lab</div><div class="hero-tile-label">Your Mission</div></a>
+  </div>
+</section>
+
+<!-- S0 FOUNDATION: WHY LANGCHAIN -->
+<section class="section" id="s0" style="min-height:auto;padding-top:100px;padding-bottom:60px">
+  <div class="section-label">Start Here</div>
+  <div class="section-title">Why Does LangChain Even Exist?</div>
+  <div class="section-sub">Let's look at the real problem first. Then the answer will make sense.</div>
+
+  <div class="card" style="max-width:760px;margin-bottom:20px;border-left:3px solid var(--danger)">
+    <h4 style="color:var(--white);margin-bottom:8px">🔧 The problem — yesterday, in M1.2</h4>
+    <p style="font-size:15px;line-height:1.8">You wrote code to do ONE thing. Send a message to the AI. Wait for a reply. Check the reply is correct. Try again if it's broken.</p>
+    <p style="font-size:15px;line-height:1.8;margin-top:10px">That's already a lot of code, for just one step. A real banking app needs <strong style="color:var(--accent)">many</strong> steps, chained together. Writing every connection by hand gets slow. And easy to break.</p>
+  </div>
+
+  <div class="card" style="max-width:760px;margin-bottom:20px;border-left:3px solid var(--success)">
+    <h4 style="color:var(--white);margin-bottom:8px">🧩 The fix — LangChain</h4>
+    <p style="font-size:15px;line-height:1.8">LangChain is a box of ready-made parts. Calling a model. Checking the reply. Retrying. Connecting steps together. All already built, tested, and ready to use.</p>
+    <p style="font-size:15px;line-height:1.8;margin-top:10px">You just snap the parts together — like LEGO. You don't build each part from scratch anymore.</p>
+  </div>
+
+  <div class="card" style="margin-bottom:20px">
+    <h4 style="color:var(--white);margin-bottom:12px">Who else uses this, every day</h4>
+    <div class="card-grid card-grid-3">
+      <div class="card" style="background:var(--card2);padding:14px"><div style="font-size:22px">💬</div><div style="font-size:13.5px;color:var(--white);font-weight:700;margin-top:4px">Bank chatbots</div><div style="font-size:12px;color:var(--dim);margin-top:2px">exactly what you're building for Meridian</div></div>
+      <div class="card" style="background:var(--card2);padding:14px"><div style="font-size:22px">🔍</div><div style="font-size:13.5px;color:var(--white);font-weight:700;margin-top:4px">Search-your-documents tools</div><div style="font-size:12px;color:var(--dim);margin-top:2px">you'll build this later this week</div></div>
+      <div class="card" style="background:var(--card2);padding:14px"><div style="font-size:22px">🤖</div><div style="font-size:13.5px;color:var(--white);font-weight:700;margin-top:4px">AI coding assistants</div><div style="font-size:12px;color:var(--dim);margin-top:2px">built the exact same way</div></div>
+    </div>
+  </div>
+
+  <div class="selfcheck">
+    <div class="selfcheck-q">🤔 Quick guess: does LangChain let the AI do something new it couldn't do before?</div>
+    <button class="selfcheck-btn" onclick="toggleCheck(this)">Reveal answer ↓</button>
+    <div class="selfcheck-ans">No. LangChain doesn't add new AI powers. It just saves you from writing the same connecting code, over and over. Same AI. Way less typing.</div>
+  </div>
+
+  <div class="lab-marker" style="background:#C9A44C1A;border-color:#C9A44C59">
+    <div class="lab-marker-icon">→</div>
+    <div>
+      <div class="lab-marker-title" style="color:var(--accent)">Coming up</div>
+      <div class="lab-marker-desc">You'll rebuild M1.2's extraction task using LangChain's ready-made parts. Same result. Way less code. Let's start with Concept A.</div>
+    </div>
+  </div>
+</section>
+
+<!-- S2 CONCEPT A -->
+<section class="section" id="s2" style="min-height:auto;padding-top:100px;padding-bottom:60px">
+  <div class="section-label">Concept A</div>
+  <div class="section-title">One Line Picks Your AI Company</div>
+  <div class="section-sub">Think of AI companies like streaming services. Same TV. Different service.</div>
+
+  <div class="card" style="margin-bottom:20px">
+    <div class="flow-row" style="justify-content:center">
+      <div class="flow-box">📺 Netflix</div>
+      <div class="flow-box">📺 Prime Video</div>
+      <div class="flow-box">📺 Disney+</div>
+    </div>
+    <p style="font-size:13.5px;color:var(--dim);text-align:center;margin-top:2px">Same TV. Same remote. You just pick a different app.</p>
+    <div class="flow-row" style="justify-content:center;margin-top:18px">
+      <div class="flow-box">🤖 OpenAI</div>
+      <div class="flow-box">🤖 Anthropic</div>
+      <div class="flow-box">🤖 Google</div>
+    </div>
+    <p style="font-size:13.5px;color:var(--dim);text-align:center;margin-top:2px">Same code. You just pick a different AI company. That's what <code style="color:var(--accent)">init_chat_model</code> does.</p>
+  </div>
+
+  <div class="playground">
+    <div class="pg-label">Try it — Swap the AI company</div>
+    <div class="pg-title">Click a company. Watch which line changes.</div>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <button class="btn btn-toggle active" id="prov-openai" onclick="setProvider('openai')">OpenAI</button>
+      <button class="btn btn-toggle" id="prov-anthropic" onclick="setProvider('anthropic')">Anthropic</button>
+    </div>
+    <div class="code-block" id="provider-code"></div>
+    <p style="font-size:12.5px;color:var(--dim);margin-top:10px">Notice: only this one block changes. Everything else on this page today stays exactly the same.</p>
+  </div>
+
+  <div class="selfcheck" id="predict-a">
+    <div class="selfcheck-q">🤔 Meridian wants to switch from OpenAI to Anthropic. How many lines of code change?</div>
+    <div class="predict-options">
+      <button class="btn predict-opt" data-correct="true" onclick="handlePredict(this,'predict-a')">A. About 1 line</button>
+      <button class="btn predict-opt" data-correct="false" onclick="handlePredict(this,'predict-a')">B. About 5 lines</button>
+      <button class="btn predict-opt" data-correct="false" onclick="handlePredict(this,'predict-a')">C. The whole project</button>
+    </div>
+    <div class="selfcheck-ans" id="predict-a-ans">A is right! Just the model name and company name, inside <code style="color:var(--accent)">init_chat_model</code>. The prompt, the chain, and the retry code don't change at all — none of them talk to the AI company directly.</div>
+  </div>
+
+  <div class="lab-marker">
+    <div class="lab-marker-icon">→</div>
+    <div>
+      <div class="lab-marker-title">Switch to VS Code now — run Task 1</div>
+      <div class="lab-marker-desc">Open the starter notebook. Run Task 1's cell. Read what the model replies. Then come back here for Concept B.</div>
+    </div>
+  </div>
+  <div class="quiz-marker">
+    <div class="quiz-marker-icon">📊</div>
+    <div>
+      <div class="quiz-title">AhaSlides checkpoint — after Task 1</div>
+      <div class="quiz-desc">One quick question about what you just saw. Not graded — your notebook's autograder is the real score.</div>
+    </div>
+  </div>
+</section>
+
+<!-- S3 CONCEPT B -->
+<section class="section" id="s3" style="min-height:auto;padding-top:100px;padding-bottom:60px">
+  <div class="section-label">Concept B</div>
+  <div class="section-title">Snap The Pieces Together</div>
+  <div class="section-sub">In LangChain, every piece is a LEGO block. You snap them together with one symbol: |</div>
+
+  <div class="card" style="margin-bottom:20px">
+    <h4 style="color:var(--white);margin-bottom:10px">🧱 Mental model: every step is a LEGO block</h4>
+    <p style="font-size:14.5px;line-height:1.75">LangChain calls each block a <strong style="color:var(--accent)">Runnable</strong>. A Runnable takes something in, and gives something out — just like a LEGO block snaps onto the next one.</p>
+    <p style="font-size:14.5px;line-height:1.75;margin-top:10px">Snap enough Runnables together, and you get a <strong style="color:var(--accent)">Chain</strong> — like parts moving down an assembly line. Each stage does its one job, then passes the result on.</p>
+  </div>
+
+  <div class="playground">
+    <div class="pg-label">Try it — Build the chain, one block at a time</div>
+    <div class="pg-title">Click 1 → 2 → 3 → 4, in order. Watch it grow.</div>
+    <div style="display:flex;gap:10px;margin-bottom:16px" id="chain-steps"></div>
+    <div class="code-block" id="chain-code">extraction_prompt</div>
+    <p style="font-size:12.5px;color:var(--dim);margin-top:10px" id="chain-note">Stage 1 — the Recipe. Just the prompt: a system message plus a slot for the customer's text.</p>
+  </div>
+
+  <div class="card-grid card-grid-2" style="margin-bottom:20px">
+    <div class="card" style="background:var(--card2)"><div style="font-size:22px;margin-bottom:6px">📝</div><div style="font-size:13.5px;color:var(--white);font-weight:700">Stage 1 — Prompt = Recipe</div><div style="font-size:12.5px;color:var(--dim);margin-top:4px">A recipe tells a chef exactly what to make. The prompt tells the model exactly what to do.</div></div>
+    <div class="card" style="background:var(--card2)"><div style="font-size:22px;margin-bottom:6px">👨‍🍳</div><div style="font-size:13.5px;color:var(--white);font-weight:700">Stage 2 — Model = Chef</div><div style="font-size:12.5px;color:var(--dim);margin-top:4px">The chef reads the recipe and cooks. The model reads the prompt and replies.</div></div>
+    <div class="card" style="background:var(--card2)"><div style="font-size:22px;margin-bottom:6px">🧾</div><div style="font-size:13.5px;color:var(--white);font-weight:700">Stage 3 — Structured Output = Bill Format</div><div style="font-size:12.5px;color:var(--dim);margin-top:4px">A restaurant bill always has the same format: item, price, total. Structured output forces the model's reply into a fixed format too.</div></div>
+    <div class="card" style="background:var(--card2)"><div style="font-size:22px;margin-bottom:6px">📞</div><div style="font-size:13.5px;color:var(--white);font-weight:700">Stage 4 — Retry = Call The Customer Again</div><div style="font-size:12.5px;color:var(--dim);margin-top:4px">Didn't hear them clearly? You call back and ask again. Retry does the same thing to the model.</div></div>
+  </div>
+
+  <div class="selfcheck" id="predict-b">
+    <div class="selfcheck-q">🤔 In <code style="color:var(--accent)">extraction_prompt | model</code>, what does the <code style="color:var(--accent)">|</code> symbol do?</div>
+    <div class="predict-options">
+      <button class="btn predict-opt" data-correct="false" onclick="handlePredict(this,'predict-b')">A. Runs both sides at the same time</button>
+      <button class="btn predict-opt" data-correct="true" onclick="handlePredict(this,'predict-b')">B. Sends the left side's output into the right side</button>
+      <button class="btn predict-opt" data-correct="false" onclick="handlePredict(this,'predict-b')">C. Picks whichever side is faster</button>
+    </div>
+    <div class="selfcheck-ans" id="predict-b-ans">B is right! It's a lot like a Unix pipe. The prompt's finished message becomes the model's input. Left to right, one stage feeds the next.</div>
+  </div>
+
+  <div class="lab-marker">
+    <div class="lab-marker-icon">→</div>
+    <div>
+      <div class="lab-marker-title">Switch to VS Code now — run Tasks 2, 3 and 4</div>
+      <div class="lab-marker-desc">Three small reads in a row: the prompt, the chain, and the retry wrapper. Come back here for Concept C once you're done.</div>
+    </div>
+  </div>
+  <div class="quiz-marker">
+    <div class="quiz-marker-icon">📊</div>
+    <div>
+      <div class="quiz-title">AhaSlides checkpoint — after Tasks 2–4</div>
+      <div class="quiz-desc">Same as every checkpoint on this page — a quick attention check, not graded.</div>
+    </div>
+  </div>
+</section>
+
+<!-- S4 CONCEPT C -->
+<section class="section" id="s4" style="min-height:auto;padding-top:100px;padding-bottom:60px">
+  <div class="section-label">Concept C</div>
+  <div class="section-title">Remember The Hook? Here It Is.</div>
+  <div class="section-sub">Same extraction job from M1.2. Same result. Watch the line count.</div>
+
+  <div class="playground">
+    <div class="pg-label">Try it — Toggle the two approaches</div>
+    <div class="pg-title">Click each button. Same job. Very different amount of code.</div>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <button class="btn btn-toggle active" id="approach-manual" onclick="setApproach('manual')">Manual (M1.2 style)</button>
+      <button class="btn btn-toggle" id="approach-chain" onclick="setApproach('chain')">LangChain (today)</button>
+    </div>
+    <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px">
+      <span class="linecount-num" id="linecount">20</span>
+      <span style="font-size:13px;color:var(--dim)">lines to do the same job</span>
+    </div>
+    <div class="code-block" id="approach-code"></div>
+  </div>
+
+  <div class="wow-marker">
+    <div style="font-size:24px">🤯</div>
+    <div>
+      <div style="font-size:14px;font-weight:800;color:var(--success)">That's the whole trick</div>
+      <div style="font-size:12.5px;color:var(--dim);margin-top:3px"><code style="color:var(--accent)">with_structured_output()</code> replaces your manual JSON parsing. <code style="color:var(--accent)">.with_retry()</code> replaces your manual retry loop. Nothing magic — just already built for you.</div>
+    </div>
+  </div>
+
+  <div class="selfcheck" id="predict-c">
+    <div class="selfcheck-q">🤔 Is <code style="color:var(--accent)">with_structured_output</code> doing something the AI couldn't do before, or just less typing for you?</div>
+    <div class="predict-options">
+      <button class="btn predict-opt" data-correct="false" onclick="handlePredict(this,'predict-c')">A. Something brand new</button>
+      <button class="btn predict-opt" data-correct="true" onclick="handlePredict(this,'predict-c')">B. Same process, way less typing</button>
+    </div>
+    <div class="selfcheck-ans" id="predict-c-ans">B is right! Same tool calling from M1.2, underneath. LangChain builds the tool structure from your Pydantic model, sends it, and checks the result — automatically. You just don't have to write that part anymore.</div>
+  </div>
+
+  <div class="lab-marker">
+    <div class="lab-marker-icon">→</div>
+    <div>
+      <div class="lab-marker-title">Switch to VS Code now — run Task 5</div>
+      <div class="lab-marker-desc">The chain runs against all 10 sample messages. Read the pass/fail summary. Then come back for Concept D.</div>
+    </div>
+  </div>
+  <div class="quiz-marker">
+    <div class="quiz-marker-icon">📊</div>
+    <div>
+      <div class="quiz-title">AhaSlides checkpoint — after Task 5</div>
+      <div class="quiz-desc">A question about the 10-message results you just read. Not graded.</div>
+    </div>
+  </div>
+</section>
+
+<!-- S5 CONCEPT D -->
+<section class="section" id="s5" style="min-height:auto;padding-top:100px;padding-bottom:60px">
+  <div class="section-label">Concept D</div>
+  <div class="section-title">The Agent Decides, You Don't</div>
+  <div class="section-sub">Think of it like GPS choosing your route. You don't pick turn by turn — it decides for you.</div>
+
+  <div class="card" style="margin-bottom:20px">
+    <h4 style="color:var(--white);margin-bottom:8px">🗺️ Mental model: Agent = GPS</h4>
+    <p style="font-size:14.5px;line-height:1.75">A GPS looks at the traffic and picks a route. Nobody hard-coded "if traffic, turn left." It decides, every time, based on what it sees.</p>
+    <p style="font-size:14.5px;line-height:1.75;margin-top:10px"><code style="color:var(--accent)">create_agent</code> works the same way. It looks at a tool's description. Then it decides, by itself, whether to use it.</p>
+  </div>
+
+  <div class="playground">
+    <div class="pg-label">Try it — Ask the agent something</div>
+    <div class="pg-title">Click a question. Watch what the agent chooses to do.</div>
+    <button class="agent-btn" onclick="runAgentDemo('calc')">"What is 2500 divided by 20?"</button>
+    <button class="agent-btn" onclick="runAgentDemo('general')">"What does Meridian Retail Bank do?"</button>
+    <div class="pg-output" id="agent-output" style="display:none">
+      <div class="agent-trace" id="agent-trace"></div>
+    </div>
+  </div>
+
+  <div class="selfcheck" id="predict-d">
+    <div class="selfcheck-q">🤔 Predict: for the second question above, will the agent use the calculator tool?</div>
+    <div class="predict-options">
+      <button class="btn predict-opt" data-correct="false" onclick="handlePredict(this,'predict-d')">A. Yes, it always tries the tool first</button>
+      <button class="btn predict-opt" data-correct="true" onclick="handlePredict(this,'predict-d')">B. No, it isn't a math question</button>
+    </div>
+    <div class="selfcheck-ans" id="predict-d-ans">B is right! The model reads the calculator's description, sees it's for arithmetic, and decides a Meridian question doesn't need it. Nobody wrote an if/else rule — it's a judgment call, every time. Day 3 goes deeper on this with more tools to choose from.</div>
+  </div>
+
+  <div class="lab-marker">
+    <div class="lab-marker-icon">→</div>
+    <div>
+      <div class="lab-marker-title">Switch to VS Code now — run Task 6</div>
+      <div class="lab-marker-desc">Read-along only, nothing graded here. Watch the real agent make the same kind of choice you just saw. Then come back for the recap.</div>
+    </div>
+  </div>
+  <div class="quiz-marker">
+    <div class="quiz-marker-icon">📊</div>
+    <div>
+      <div class="quiz-title">AhaSlides checkpoint — after Task 6</div>
+      <div class="quiz-desc">Last quick check before your lab's final autograder run.</div>
+    </div>
+  </div>
+</section>
+
+<!-- S6 RECAP -->
+<section class="section" id="s6" style="min-height:auto;padding-top:60px;padding-bottom:40px">
+  <div class="section-label">Recap</div>
+  <div class="section-title">🎉 Look What You Learned</div>
+  <div class="card-grid card-grid-2">
+    <div class="card"><div class="accent-bar"></div><h4 style="color:var(--white);margin-bottom:6px">A · Swap AI Companies</h4><p style="font-size:13.5px;color:var(--text)">init_chat_model turns your AI company into one config line, not a code rewrite.</p></div>
+    <div class="card"><div class="accent-bar"></div><h4 style="color:var(--white);margin-bottom:6px">B · Snap The Pieces Together</h4><p style="font-size:13.5px;color:var(--text)">The | symbol connects prompt → model → structured output → retry, one block at a time.</p></div>
+    <div class="card"><div class="accent-bar"></div><h4 style="color:var(--white);margin-bottom:6px">C · 20 Lines → 2</h4><p style="font-size:13.5px;color:var(--text)">with_structured_output and .with_retry() replace your manual parsing and retry loop. Same result, way less code.</p></div>
+    <div class="card"><div class="accent-bar"></div><h4 style="color:var(--white);margin-bottom:6px">D · Agent Decides</h4><p style="font-size:13.5px;color:var(--text)">create_agent lets the model choose whether it needs a tool. Nobody hard-codes that rule.</p></div>
+  </div>
+</section>
+
+<!-- LAB -->
+<section class="section" id="labs" style="align-items:stretch;min-height:auto;padding-top:64px">
+  <div class="section-label">Your Lab</div>
+  <div class="section-title">D2 · M2.1 — LangChain 1.0 Core Notebook</div>
+  <div class="section-sub">Worked interleaved with this page: Concept A → Task 1 → Concept B → Tasks 2-4 → Concept C → Task 5 → Concept D → Task 6 · full instructions in the lab README</div>
+
+  <div class="ach-grid fade-in">
+    <div class="ach-card"><div class="ach-icon">🥈</div><div class="ach-name">Silver</div><div class="ach-desc">Day 2 attempted, at least one module autograder passed</div></div>
+    <div class="ach-card"><div class="ach-icon">🥇</div><div class="ach-name">Gold</div><div class="ach-desc">All of Day 2's module autograders pass</div></div>
+    <div class="ach-card"><div class="ach-icon">💎</div><div class="ach-name">Diamond</div><div class="ach-desc">Gold + all 10/10 sample messages extracting cleanly</div></div>
+  </div>
+
+  <div class="lab-card fade-in">
+    <span class="lab-badge">M2.1 · Individual · Autograded</span>
+    <h3>Build: the extraction chain M1.2 only described</h3>
+    <p class="desc">Fully working code — nothing to write. Run each task's cell. Read the output. Follow the arrows on this page back to the notebook, and back again.</p>
+    <ul class="lab-tasks">
+      <li>Task 1 — init_chat_model: one interface, any AI company</li>
+      <li>Task 2 — the prompt template</li>
+      <li>Task 3 — the extraction chain (with_structured_output)</li>
+      <li>Task 4 — retry (.with_retry)</li>
+      <li>Task 5 — run against the 10 sample messages</li>
+      <li>Task 6 — read-along: a minimal tool-using agent (create_agent)</li>
+    </ul>
+    <p style="font-size:13.5px;color:var(--dim);margin-top:14px">Full steps: <code style="background:#080D18;padding:2px 6px;border-radius:4px;color:var(--accent)">Day2/labs/readme/D2_M2.1_LangChain_Core_README.md</code> · Starter notebook: <code style="background:#080D18;padding:2px 6px;border-radius:4px;color:var(--accent)">Day2/labs/starter/D2_M2.1_LangChain_Core_Starter.ipynb</code></p>
+  </div>
+</section>
+
+<div class="quiz-marker fade-in" style="max-width:900px;margin:0 48px 60px;background:#10B9811A;border-color:#10B98159">
+  <div>
+    <div class="quiz-title" style="color:var(--success)">✅ Mission Complete — M2.1</div>
+    <div class="quiz-desc">Your extraction chain is real now — built in LangChain, with retry built in. That's Capstone Phase 1, done. Next: you'll build real semantic search with a vector database.</div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+// CONCEPT A — provider toggle
+// ══════════════════════════════════════════════════════════════════
+const PROVIDER_CODE = {
+  openai: `model = init_chat_model(
+    "gpt-4o-mini",
+    model_provider="openai",
+    temperature=0,
+)`,
+  anthropic: `model = init_chat_model(
+    "claude-3-5-sonnet-latest",
+    model_provider="anthropic",
+    temperature=0,
+)`,
+};
+function setProvider(p){
+  document.getElementById('prov-openai').classList.toggle('active', p==='openai');
+  document.getElementById('prov-anthropic').classList.toggle('active', p==='anthropic');
+  document.getElementById('provider-code').textContent = PROVIDER_CODE[p];
+}
+
+// ══════════════════════════════════════════════════════════════════
+// CONCEPT B — build-the-chain click sequence
+// ══════════════════════════════════════════════════════════════════
+const CHAIN_STAGES = [
+  {code:"extraction_prompt", note:"Stage 1 — the Recipe. Just the prompt: a system message plus a slot for the customer's text."},
+  {code:"extraction_prompt | model", note:"Stage 2 — add the Chef. Now it sends the prompt to the model and gets a raw reply back."},
+  {code:"extraction_prompt | model.with_structured_output(CustomerRequest)", note:"Stage 3 — add the Bill Format. The model's reply now has to match the CustomerRequest structure, every time."},
+  {code:"(extraction_prompt | model.with_structured_output(CustomerRequest))\\\n    .with_retry(stop_after_attempt=3)", note:"Stage 4 — add the Callback. If a call fails, it tries again automatically, up to 3 times. This is the real extraction_chain from your lab."},
+];
+let chainStep = 0;
+function showChainStage(i){
+  document.getElementById('chain-code').textContent = CHAIN_STAGES[i].code;
+  document.getElementById('chain-note').textContent = CHAIN_STAGES[i].note;
+  chainStep = i;
+  document.getElementById('chain-steps').innerHTML = CHAIN_STAGES.map((_,idx)=>
+    `<div class="step-chip ${idx<i?'done':idx===i?'active':''}" onclick="showChainStage(${idx})">${idx+1}</div>`
+  ).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// CONCEPT C — manual vs chain toggle with line-count
+// ══════════════════════════════════════════════════════════════════
+const APPROACH_CODE = {
+  manual: {
+    lines: 20,
+    code: `tool_schema = {"name": "extract", "parameters": {...}}
+response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[...],
+    tools=[tool_schema],
+)
+tool_call = response.choices[0].message.tool_calls[0]
+raw_args = json.loads(tool_call.function.arguments)
+try:
+    name = raw_args["name"]
+    account_type = raw_args["account_type"]
+    if account_type not in VALID_TYPES:
+        raise ValueError(...)
+    intent = raw_args["intent"]
+    ...
+    result = CustomerRequest(**raw_args)
+except (KeyError, ValueError, ValidationError) as e:
+    for attempt in range(3):
+        # manual retry loop
+        ...`,
+  },
+  chain: {
+    lines: 2,
+    code: `extraction_chain = (
+    extraction_prompt | model.with_structured_output(CustomerRequest)
+).with_retry(stop_after_attempt=3)`,
+  },
+};
+function setApproach(a){
+  document.getElementById('approach-manual').classList.toggle('active', a==='manual');
+  document.getElementById('approach-chain').classList.toggle('active', a==='chain');
+  document.getElementById('approach-code').textContent = APPROACH_CODE[a].code;
+  document.getElementById('linecount').textContent = APPROACH_CODE[a].lines;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// CONCEPT D — agent decision demo (pre-baked, no live call)
+// ══════════════════════════════════════════════════════════════════
+function runAgentDemo(kind){
+  const out = document.getElementById('agent-output');
+  const trace = document.getElementById('agent-trace');
+  out.style.display = 'block';
+  trace.innerHTML = 'Agent thinking…';
+  setTimeout(()=>{
+    if (kind === 'calc'){
+      trace.innerHTML = `> Question: "What is 2500 divided by 20?"\n> Agent sees the <span class="tool">calculator</span> tool's description: "Evaluate a simple arithmetic expression"\n> Decision: <span class="tool">CALL calculator(expression="2500 / 20")</span>\n> Tool result: 125.0\n> Final answer: "2500 divided by 20 is 125."`;
+    } else {
+      trace.innerHTML = `> Question: "What does Meridian Retail Bank do?"\n> Agent sees the <span class="tool">calculator</span> tool's description: "Evaluate a simple arithmetic expression"\n> Decision: <span class="direct">no tool needed — answer directly</span>\n> Final answer: "Meridian Retail Bank is a retail banking service offering accounts, cards, and loans to individual customers."`;
+    }
+  }, 500);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// PREDICT-AND-REVEAL — shared by every MCQ self-check on this page
+// ══════════════════════════════════════════════════════════════════
+function handlePredict(btn, groupId){
+  const group = document.getElementById(groupId);
+  const opts = group.querySelectorAll('.predict-opt');
+  opts.forEach(o => {
+    o.disabled = true;
+    if (o.dataset.correct === 'true') o.classList.add('predict-correct');
+    else if (o === btn) o.classList.add('predict-wrong');
+  });
+  const ans = document.getElementById(groupId + '-ans');
+  if (ans) ans.classList.add('show');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// SHARED UI HELPERS
+// ══════════════════════════════════════════════════════════════════
+function toggleCheck(btn){
+  const ans = btn.nextElementSibling;
+  ans.classList.toggle('show');
+  btn.textContent = ans.classList.contains('show') ? 'Hide answer ↑' : 'Reveal answer ↓';
+}
+function initNav(){
+  if (typeof IntersectionObserver === 'undefined') return;
+  const pills = document.querySelectorAll('.nav-pill');
+  const sections = document.querySelectorAll('.section');
+  const prog = document.getElementById('nav-prog');
+  const obs = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const id = e.target.id;
+        pills.forEach(p=>p.classList.toggle('active',p.getAttribute('href')==='#'+id));
+        const idx = Array.from(sections).findIndex(s=>s.id===id);
+        prog.textContent = `Section ${idx+1} / ${sections.length}`;
+      }
+    });
+  },{threshold:0.35});
+  sections.forEach(s=>obs.observe(s));
+}
+function safeInit(name, fn){
+  try { fn(); } catch (e) { console.error('Widget init failed:', name, e); }
+}
+function init(){
+  safeInit('providerToggle', () => setProvider('openai'));
+  safeInit('chainBuilder', () => showChainStage(0));
+  safeInit('approachToggle', () => setApproach('manual'));
+  safeInit('scrollNav', initNav);
+}
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

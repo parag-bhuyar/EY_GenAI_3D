@@ -20,10 +20,16 @@ Run directly for a quick manual check:
 import json
 import os
 import time
+from pathlib import Path
 from typing import Literal, Optional
 
+from dotenv import load_dotenv
 from openai import OpenAI
 from pydantic import BaseModel, Field, ValidationError
+
+# Loads OPENAI_API_KEY from the .env file sitting next to this script — you
+# never need to type or export the key in the terminal.
+load_dotenv(Path(__file__).resolve().parent / ".env")
 
 # Same pattern as M1.1: fail loudly and immediately if the key is missing,
 # rather than proceeding and getting a confusing error 30 seconds later on

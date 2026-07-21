@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 2 — Vector Stores, Part 1 | EY GenAI Programme</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0B1220;--card:#141D30;--card2:#1A2438;--accent:#C9A44C;--accent2:#3E7CB1;--white:#FFFFFF;--text:#C3CCDA;--dim:#8091A8;--danger:#EF4444;--warn:#F59E0B;--success:#10B981;--border:#22304A}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:17px;line-height:1.6;overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(11,18,32,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;gap:4px;overflow-x:auto}
+.nav-pill{flex-shrink:0;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;color:var(--dim);text-decoration:none;transition:.2s;border:1px solid transparent;cursor:pointer}
+.nav-pill:hover,.nav-pill.active{background:var(--accent)20;color:var(--accent);border-color:var(--accent)40}
+.nav-brand{font-size:13px;font-weight:800;color:var(--accent);margin-right:16px;white-space:nowrap;flex-shrink:0}
+.nav-prog{margin-left:auto;font-size:11px;color:var(--dim);flex-shrink:0;white-space:nowrap}
+.section{min-height:100vh;padding:80px 48px 48px;display:flex;flex-direction:column;justify-content:center;border-bottom:1px solid var(--border)}
+.section-label{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:12px}
+.section-title{font-size:34px;font-weight:800;color:var(--white);margin-bottom:8px;line-height:1.2}
+.section-sub{font-size:17px;color:var(--dim);margin-bottom:32px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px}
+.card-grid{display:grid;gap:16px}
+.card-grid-2{grid-template-columns:1fr 1fr}
+.card-grid-3{grid-template-columns:1fr 1fr 1fr}
+@media(max-width:900px){.card-grid-2,.card-grid-3{grid-template-columns:1fr}}
+.accent-bar{width:40px;height:3px;background:var(--accent);border-radius:2px;margin-bottom:12px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:8px;font-size:15px;font-weight:600;border:none;cursor:pointer;transition:.2s}
+.btn-primary{background:var(--accent);color:#1a1300}
+.btn-primary:hover{background:#DDBB63;transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)60}
+.btn-toggle{background:var(--card2);color:var(--text);border:1px solid var(--border)}
+.btn-toggle.active{background:var(--accent2)25;color:#8FC0E8;border-color:var(--accent2)}
+.btn-sm{padding:8px 16px;font-size:13px}
+.code-block{background:#080D18;border:1px solid var(--border);border-radius:6px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--accent);white-space:pre-wrap;margin:8px 0;line-height:1.6}
+.selfcheck{background:#3E7CB112;border:1px solid #3E7CB14D;border-radius:10px;padding:18px 20px;margin:20px 0}
+.selfcheck-q{font-size:15px;color:#8FC0E8;margin-bottom:12px;font-weight:600;line-height:1.5}
+.selfcheck-btn{font-size:13px;background:#3E7CB126;border:1px solid #3E7CB166;color:#8FC0E8;border-radius:6px;padding:8px 16px;cursor:pointer;font-weight:600}
+.selfcheck-ans{display:none;margin-top:14px;padding-top:14px;border-top:1px solid #3E7CB133;font-size:14px;color:var(--text);line-height:1.65}
+.selfcheck-ans.show{display:block}
+.hero-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:24px}
+@media(max-width:900px){.hero-grid{grid-template-columns:repeat(2,1fr)}}
+.hero-tile{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:.2s;text-decoration:none}
+.hero-tile:hover{border-color:var(--accent);transform:translateY(-3px)}
+.hero-tile-num{font-size:11px;font-weight:700;color:var(--accent)}
+.hero-tile-label{font-size:14px;font-weight:600;color:var(--white);margin-top:4px}
+.lab-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px 28px;margin-bottom:18px}
+.lab-badge{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:var(--accent)1A;color:var(--accent);border:1px solid var(--accent)4D;border-radius:4px;padding:4px 11px;display:inline-block;margin-bottom:14px}
+.lab-card h3{font-size:21px;font-weight:800;color:var(--white);margin-bottom:8px}
+.lab-card .desc{font-size:15px;color:var(--text);margin-bottom:16px;line-height:1.65}
+.lab-tasks{padding-left:20px;font-size:14.5px;color:var(--text)}
+.lab-tasks li{margin-bottom:8px;line-height:1.6}
+.ach-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+@media(max-width:700px){.ach-grid{grid-template-columns:1fr}}
+.ach-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;transition:.2s}
+.ach-card:hover{transform:translateY(-3px);border-color:var(--accent)}
+.ach-icon{font-size:26px;margin-bottom:6px}
+.ach-name{font-size:14px;font-weight:700;color:var(--white);margin-bottom:3px}
+.ach-desc{font-size:12px;color:var(--dim)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .4s ease}
+.playground{background:linear-gradient(180deg,#1A2438,#141D30);border:1px solid var(--accent)40;border-radius:14px;padding:24px 26px;margin-bottom:20px}
+.pg-label{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.pg-title{font-size:18px;font-weight:800;color:var(--white);margin-bottom:14px}
+.pg-output{background:#080D18;border:1px solid var(--accent)40;border-radius:10px;padding:16px;margin-top:10px}
+.lab-marker{background:#3E7CB11A;border:1px solid #3E7CB159;border-radius:10px;padding:18px 22px;margin:26px 0;display:flex;align-items:center;gap:16px}
+.lab-marker-icon{font-size:26px;flex-shrink:0}
+.lab-marker-title{font-size:14px;font-weight:700;color:#8FC0E8}
+.lab-marker-desc{font-size:12.5px;color:var(--dim);margin-top:3px}
+.quiz-marker{background:#C9A44C1A;border:1px solid #C9A44C59;border-radius:10px;padding:16px 22px;margin:26px 0;display:flex;align-items:center;gap:16px}
+.quiz-marker-icon{font-size:22px;flex-shrink:0}
+.quiz-title{font-size:14px;font-weight:700;color:var(--accent)}
+.quiz-desc{font-size:12.5px;color:var(--dim);margin-top:3px}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.bar-label{width:230px;flex-shrink:0;font-size:13px;color:var(--text)}
+.bar-track{flex:1;background:#080D18;border-radius:6px;overflow:hidden;height:22px;position:relative;border:1px solid var(--border)}
+.bar-fill{height:100%;background:var(--accent);transition:width .5s ease;width:0%}
+.bar-pct{width:56px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dim);text-align:left}
+.scan-demo{display:flex;align-items:center;gap:14px;margin:14px 0}
+.scan-track{flex:1;background:#080D18;border-radius:8px;height:34px;position:relative;overflow:hidden;border:1px solid var(--border)}
+.scan-fill{position:absolute;left:0;top:0;bottom:0;background:var(--danger)40;transition:width 1.2s linear;width:0%}
+.scan-fill.indexed{background:var(--success)40;transition:width .3s ease}
+.scan-time{width:100px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--white)}
+.filter-chip{display:inline-block;padding:4px 10px;border-radius:12px;font-size:12px;font-weight:700;margin:2px}
+.filter-chip.match{background:var(--success)20;color:var(--success);border:1px solid var(--success)40}
+.filter-chip.excluded{background:var(--card2);color:var(--dim);border:1px solid var(--border);opacity:.5}
+/* ============ NEW: SVG pipeline diagrams (8 across the page) ============ */
+.pipeline-container{margin:18px 0;overflow-x:auto}
+.pipeline-svg{display:block;margin:0 auto;max-width:100%;height:auto}
+.pipe-text{font-family:'Inter',sans-serif;font-weight:700;font-size:11px}
+.mmap-wrap,.cosine-wrap{margin:18px 0;text-align:center}
+.mini-svg{max-width:380px;width:100%;height:auto}
+/* ============ NEW: flip cards ============ */
+.flip-card{perspective:1200px;height:210px;cursor:pointer}
+.flip-card-inner{position:relative;width:100%;height:100%;transition:transform .6s cubic-bezier(.4,.1,.2,1);transform-style:preserve-3d}
+.flip-card.flipped .flip-card-inner{transform:rotateY(180deg)}
+.flip-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:14px;padding:22px;border:1px solid var(--border);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.flip-front{background:var(--card)}
+.flip-front:hover{border-color:var(--accent)}
+.flip-back{background:var(--card2);transform:rotateY(180deg);align-items:flex-start;text-align:left}
+.flip-hint{font-size:11px;color:var(--dim);margin-top:12px}
+.flip-back ul{padding-left:18px;font-size:13.5px;line-height:1.85;color:var(--text)}
+.flip-icon{font-size:34px;margin-bottom:10px}
+/* ============ NEW: story card ============ */
+.story-card{background:linear-gradient(135deg,#1A2438,#141D30);border:1px solid var(--border);border-radius:14px;padding:26px;margin-bottom:20px}
+.story-line{opacity:0;transform:translateY(6px);transition:.5s;margin-bottom:12px}
+.story-line.show{opacity:1;transform:translateY(0)}
+.story-bubble{display:inline-block;background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:10px 16px;font-style:italic;font-size:15px}
+.story-name{font-weight:800;color:var(--accent);margin-right:8px;font-style:normal}
+/* ============ NEW: predict-then-reveal MCQ ============ */
+.predict-options{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.predict-opt{background:var(--card2);color:var(--text);border:1px solid var(--border);padding:10px 18px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:.2s}
+.predict-opt:hover:not(:disabled){border-color:var(--accent2)}
+.predict-opt:disabled{cursor:default}
+.predict-correct{background:var(--success)30!important;border-color:var(--success)!important;color:#fff!important}
+.predict-wrong{background:var(--danger)30!important;border-color:var(--danger)!important;color:#fff!important}
+/* ============ NEW: wow moments + pulse ============ */
+.wow-marker{background:var(--success)1A;border:1px solid var(--success)59;border-radius:10px;padding:16px 22px;margin:20px 0;display:flex;align-items:center;gap:16px}
+.wow-line{font-size:13px;color:var(--accent);font-weight:600;margin-top:8px}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.pulse{display:inline-block;animation:pulse 1.8s ease-in-out infinite}
+/* ============ NEW: XP / progress system ============ */
+.progress-shell{position:fixed;top:52px;left:0;right:0;height:3px;background:var(--border);z-index:999}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));width:0%;transition:width .4s ease}
+.nav-xp{font-size:11px;font-weight:700;color:var(--accent);flex-shrink:0;white-space:nowrap;margin-left:14px;background:var(--accent)15;padding:3px 10px;border-radius:20px}
+.xp-toast{position:fixed;bottom:24px;right:24px;background:var(--accent);color:#1a1300;font-weight:800;font-size:14px;padding:10px 20px;border-radius:30px;box-shadow:0 8px 24px rgba(0,0,0,.5);opacity:0;transform:translateY(10px) scale(.9);transition:.3s;pointer-events:none;z-index:2000}
+.xp-toast.show{opacity:1;transform:translateY(0) scale(1)}
+/* ============ NEW: mission callout ============ */
+.mission-card{background:linear-gradient(135deg,var(--accent)1A,transparent);border:1px solid var(--accent)40;border-radius:14px;padding:20px 24px;margin-bottom:20px}
+</style>
+</head>
+<body>
+
+<!-- global SVG arrowhead marker, reused by every pipeline diagram on this page -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" style="fill:var(--accent)"/>
+    </marker>
+  </defs>
+</svg>
+
+<nav id="main-nav">
+  <span class="nav-brand">🏦 EY GenAI · Day 2</span>
+  <a class="nav-pill active" href="#s1">🎯 Mission</a>
+  <a class="nav-pill" href="#s0">🤔 Why This?</a>
+  <a class="nav-pill" href="#s2">📍 A1 · Geometry</a>
+  <a class="nav-pill" href="#s3">🆚 A2 · Search Battle</a>
+  <a class="nav-pill" href="#s4">🗄️ B · Vector Store</a>
+  <a class="nav-pill" href="#s5">🏆 Recap</a>
+  <a class="nav-pill" href="#labs">🚀 Lab</a>
+  <span class="nav-prog" id="nav-prog">Section 1 / 7</span>
+  <span class="nav-xp" id="nav-xp">⭐ 0 XP</span>
+</nav>
+<div class="progress-shell"><div class="progress-fill" id="progress-fill"></div></div>
+<div class="xp-toast" id="xp-toast"></div>
+
+<!-- S1 HERO -->
+<section class="section" id="s1" style="background:radial-gradient(ellipse at 60% 40%,#C9A44C08 0%,transparent 60%)">
+  <div class="section-label">Day 2 · Module M1.4 + M2.2 — Part 1 of 2</div>
+  <div class="section-title">Teach a Computer What Words Mean</div>
+  <div class="section-sub">Today you build search that understands meaning, not just words. Then you store it in a real database made for exactly this.</div>
+
+  <div class="mission-card">
+    <div style="font-size:13px;font-weight:800;color:var(--accent);letter-spacing:1px;margin-bottom:6px">🎯 TODAY'S MISSION</div>
+    <div style="font-size:15px;color:var(--text);line-height:1.7">Build "search that understands meaning" by hand. Then move it into <strong style="color:var(--white)">Chroma</strong> — a real vector database — so it works at real scale.</div>
+  </div>
+
+  <div class="card-grid card-grid-2" style="margin-bottom:20px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:800;color:var(--accent);margin-bottom:8px">💡 HOW TO USE THIS PAGE</div>
+      <div style="font-size:14px;color:var(--text);line-height:1.7">Read a little. Try it in your notebook. Come back. Repeat 3 times. Don't read this whole page in one sitting.</div>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:800;color:var(--accent);margin-bottom:8px">📅 COMING NEXT SESSION</div>
+      <div style="font-size:14px;color:var(--text);line-height:1.7">Qdrant — a second vector database. Part 2 compares it side by side with Chroma.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 style="color:var(--white);margin-bottom:12px">🏆 By the end, you can</h4>
+    <div class="card-grid card-grid-2">
+      <div style="font-size:14px;color:var(--text)">✅ Explain what an embedding is</div>
+      <div style="font-size:14px;color:var(--text)">✅ Beat keyword search with meaning</div>
+      <div style="font-size:14px;color:var(--text)">✅ Explain why a Python list gets too slow</div>
+      <div style="font-size:14px;color:var(--text)">✅ Filter a search by category, instantly</div>
+    </div>
+  </div>
+
+  <div class="hero-grid">
+    <a class="hero-tile" href="#s2"><div class="hero-tile-num">A1</div><div class="hero-tile-label">Meaning = Geometry</div></a>
+    <a class="hero-tile" href="#s3"><div class="hero-tile-num">A2</div><div class="hero-tile-label">Semantic vs Keyword</div></a>
+    <a class="hero-tile" href="#s4"><div class="hero-tile-num">B</div><div class="hero-tile-label">Real Vector Store</div></a>
+    <a class="hero-tile" href="#labs"><div class="hero-tile-num">Lab</div><div class="hero-tile-label">Your Mission</div></a>
+  </div>
+</section>
+
+<!-- S0 FOUNDATION: WHY THIS MATTERS — story first -->
+<section class="section" id="s0" style="min-height:auto;padding-top:100px;padding-bottom:60px">
+  <div class="section-label">Start Here</div>
+  <div class="section-title">Two Calls to Meridian Bank</div>
+  <div class="section-sub">Same problem. Different words. Watch what the AI does.</div>
+
+  <div class="story-card">
+    <button class="btn btn-primary btn-sm" onclick="playStory()" id="story-btn">▶ Play the two calls</button>
+    <div id="story-lines" style="margin-top:18px">
+      <div class="story-line"><span class="story-name">📞 Sarah:</span><span class="story-bubble">"My card disappeared."</span></div>
+      <div class="story-line"><span class="story-name">🤖 AI:</span> Understands. Routes her to fraud support. ✅</div>
+      <div class="story-line"><span class="story-name">📞 John (later):</span><span class="story-bubble">"Someone stole my wallet."</span></div>
+      <div class="story-line"><span class="story-name">🤖 AI:</span> Understands <em>again</em>. Same routing. ✅</div>
+      <div class="story-line" style="font-weight:800;color:var(--accent);font-size:16px">🤯 Zero shared words. Same meaning. How?</div>
+    </div>
+  </div>
+
+  <div class="selfcheck" id="predict-s0">
+    <div class="selfcheck-q">🤔 Predict: will old-school keyword search connect these two calls?</div>
+    <div class="predict-options">
+      <button class="btn predict-opt" data-correct="false" onclick="handlePredict(this,'predict-s0',15)">A. Yes — same problem, so it matches</button>
+      <button class="btn predict-opt" data-correct="true" onclick="handlePredict(this,'predict-s0',15)">B. No — zero words in common</button>
+    </div>
+    <div class="selfcheck-ans" id="predict-s0-ans">B is right! Keyword search only checks for matching words. "Disappeared" and "stolen" never match. It would miss John completely. Today you'll build the fix.</div>
+  </div>
+
+  <div class="card-grid card-grid-2" style="margin-bottom:20px">
+    <div class="card" style="border-color:var(--danger)40">
+      <div style="font-size:28px;margin-bottom:8px">🔤</div>
+      <h4 style="color:var(--white);margin-bottom:8px">Old way: keyword search</h4>
+      <p style="font-size:14px;line-height:1.7">Checks if words match. "Disappeared" ≠ "stolen." Misses John entirely.</p>
+    </div>
+    <div class="card" style="border-color:var(--success)40">
+      <div style="font-size:28px;margin-bottom:8px">🗺️</div>
+      <h4 style="color:var(--white);margin-bottom:8px">New way: semantic search</h4>
+      <p style="font-size:14px;line-height:1.7">Checks if <em>meaning</em> matches. Both calls land in the same spot. Every time.</p>
+    </div>
+  </div>
+
+  <div class="lab-marker" style="background:#C9A44C1A;border-color:#C9A44C59">
+    <div class="lab-marker-icon">→</div>
+    <div>
+      <div class="lab-marker-title" style="color:var(--accent)">Coming up</div>
+      <div class="lab-marker-desc">See exactly how a sentence turns into a point on a map. Let's go to Concept A1.</div>
+    </div>
+  </div>
+</section>
+
+<!-- S2 CONCEPT A1 — Meaning = Geometry -->
+<section class="section" id="s2" style="min-height:auto;padding-top:100px;padding-bottom:60px">
+  <div class="section-label">Concept A1</div>
+  <div class="section-title">Meaning Becomes Geometry</div>
+  <div class="section-sub">Think of it like a GPS pin. Every sentence gets a location. Similar meaning = nearby pins.</div>
+
+  <div class="pipeline-container" id="embed-pipeline-svg"></div>
+
+  <div class="mmap-wrap">
+    <div id="mmap-svg"></div>
+    <p style="font-size:12px;color:var(--dim);margin-top:4px">A simple map of where 3 sentences land, compared to the query. Closer dot = closer meaning.</p>
+  </div>
+
+  <div class="playground">
+    <div class="pg-label">🤔 Predict, then click to check</div>
+    <div class="pg-title">Query: "What is the current interest rate on savings accounts?"</div>
+    <div class="predict-options" id="predict-s2">
+      <button class="btn predict-opt" data-correct="true" onclick="handlePredict(this,'predict-s2',15)">A. Meridian savings-rate sentence</button>
+      <button class="btn predict-opt" data-correct="false" onclick="handlePredict(this,'predict-s2',15)">B. Cat on the windowsill</button>
+      <button class="btn predict-opt" data-correct="false" onclick="handlePredict(this,'predict-s2',15)">C. Dog running in the park</button>
+    </div>
+    <div class="selfcheck-ans" id="predict-s2-ans" style="margin:0 0 14px">A is right — but look closely: it doesn't even use the word "interest" the same way. It still wins on meaning.</div>
+    <button class="btn btn-primary btn-sm" onclick="revealSimilarity()" id="sim-btn">▶ Reveal the real similarity scores</button>
+    <div id="sim-bars" style="margin-top:16px"></div>
+  </div>
+
+  <div class="wow-marker">
+    <div style="font-size:26px" class="pulse">🤯</div>
+    <div>
+      <div style="font-size:14px;font-weight:800;color:var(--success)">Wait... it never read the words "the same way"</div>
+      <div style="font-size:12.5px;color:var(--dim);margin-top:3px">Every sentence becomes <strong style="color:var(--accent)">1,536 numbers</strong>. You never read them. The AI just compares locations on the map.</div>
+    </div>
+  </div>
+
+  <div class="lab-marker">
+    <div class="lab-marker-icon">→</div>
+    <div>
+      <div class="lab-marker-title">Switch to VS Code now — run Tasks 1 and 2</div>
+      <div class="lab-marker-desc">Task 1: this same warm-up, for real. Task 2: turn all 10 real passages into embeddings. Then come back for Concept A2.</div>
+    </div>
+  </div>
+  <div class="quiz-marker">
+    <div class="quiz-marker-icon">📊</div>
+    <div>
+      <div class="quiz-title">AhaSlides checkpoint — after Tasks 1-2</div>
+      <div class="quiz-desc">Not graded — the autograder at the end of the notebook is the real record.</div>
+    </div>
+  </div>
+</section>
+
+<!-- S3 CONCEPT A2 — Semantic vs Keyword -->
+<section class="section" id="s3" style="min-height:auto;padding-top:100px;padding-bottom:60px">
+  <div class="section-label">Concept A2</div>
+  <div class="section-title">Semantic vs. Keyword: The Search Battle</div>
+  <div class="section-sub">Two ways to search. Tap each card below to see how they compare.</div>
+
+  <div class="card-grid card-grid-2" style="margin-bottom:20px">
+    <div class="flip-card" onclick="flipCard(this,'flip-keyword')">
+      <div class="flip-card-inner">
+        <div class="flip-face flip-front">
+          <div class="flip-icon">🔤</div>
+          <div style="font-size:17px;font-weight:800;color:var(--white)">Keyword Search</div>
+          <div class="flip-hint">👆 tap to flip</div>
+        </div>
+        <div class="flip-face flip-back">
+          <ul>
+            <li>Looks at <strong>words</strong>, like Ctrl+F</li>
+            <li>Fast and simple</li>
+            <li>No idea what words mean</li>
+            <li>Misses different phrasing</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this,'flip-semantic')">
+      <div class="flip-card-inner">
+        <div class="flip-face flip-front">
+          <div class="flip-icon">🧠</div>
+          <div style="font-size:17px;font-weight:800;color:var(--white)">Semantic Search</div>
+          <div class="flip-hint">👆 tap to flip</div>
+        </div>
+        <div class="flip-face flip-back">
+          <ul>
+            <li>Looks at <strong>meaning</strong></li>
+            <li>Handles different wording</li>
+            <li>Understands synonyms</li>
+            <li>What real AI systems use</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-grid card-grid-2" style="margin-bottom:20px">
+    <div class="pipeline-container" id="keyword-pipeline-svg"></div>
+    <div class="pipeline-container" id="semantic-pipeline-svg"></div>
+  </div>
+  <p style="font-size:12px;color:var(--dim);text-align:center;margin-top:-8px;margin-bottom:20px">Same question. Two very different journeys.</p>
+
+  <div class="playground">
+    <div class="pg-label">How semantic search decides</div>
+    <div class="pg-title">Vector = an arrow pointing somewhere. Same direction = same meaning.</div>
+    <div class="cosine-wrap" id="cosine-bars"></div>
+    <button class="btn btn-primary btn-sm" onclick="revealCosineToy()" id="cosine-btn">▶ Reveal the angle</button>
+    <p style="font-size:12.5px;color:var(--dim);margin-top:12px">This "closeness check" has a real name: <strong style="color:var(--accent)">cosine similarity</strong>. Score of 1.0 = same direction = same meaning. Real embeddings use 1,536 numbers, not 2 — same idea, just bigger.</p>
+  </div>
+
+  <div class="playground">
+    <div class="pg-label">🤔 Real data from your lab — predict first</div>
+    <div class="pg-title">Query: "Someone used my account without my permission."</div>
+    <p style="font-size:13px;color:var(--dim);margin-bottom:10px">Correct answer: passage <strong style="color:var(--text)">#8</strong>, about fraud. Which method finds it?</p>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <button class="btn btn-toggle" id="method-keyword" onclick="setMethod('keyword')">🔤 Try keyword search</button>
+      <button class="btn btn-toggle" id="method-semantic" onclick="setMethod('semantic')">🧠 Try semantic search</button>
+    </div>
+    <div class="pg-output" id="method-output">Click a button above and watch what each method finds.</div>
+  </div>
+
+  <div class="playground">
+    <div class="pg-label">🤔 Predict, then click to check</div>
+    <div class="pg-title">Query: "How do I get a higher spending limit on my credit card?"</div>
+    <div class="predict-options" id="predict-s3a">
+      <button class="btn predict-opt" data-correct="true" onclick="handlePredict(this,'predict-s3a',15)">A. Keyword search finds it easily</button>
+      <button class="btn predict-opt" data-correct="false" onclick="handlePredict(this,'predict-s3a',15)">B. Keyword search fails again</button>
+    </div>
+    <div class="selfcheck-ans" id="predict-s3a-ans" style="margin-bottom:14px">A is right! When the customer's own words match the passage's words, keyword search wins — fast, simple, correct.</div>
+    <button class="btn btn-primary btn-sm" onclick="revealKeywordWin()" id="kwwin-btn">▶ Reveal keyword ranking</button>
+    <div id="kwwin-bars" style="margin-top:14px"></div>
+    <div id="kwwin-note" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:13.5px;line-height:1.75;color:var(--text)">
+      <strong style="color:var(--success)">Keyword search wins, clearly.</strong> "Credit," "limit," "card" — exact matches. No tie, no luck needed.
+      <br><br>
+      <strong style="color:var(--accent)">But semantic search has its own weak spot:</strong> exact numbers and codes. "4521" and "4522" look almost the same to it. Real systems often combine both — called <strong>hybrid search</strong>. You'll hear this again in M2.3.
+    </div>
+  </div>
+
+  <div class="selfcheck" id="predict-s3b">
+    <div class="selfcheck-q">🧠 Which is the better example of keyword search WINNING?</div>
+    <div class="predict-options">
+      <button class="btn predict-opt" data-correct="true" onclick="handlePredict(this,'predict-s3b',15)">A. "credit limit increase" — exact terms</button>
+      <button class="btn predict-opt" data-correct="false" onclick="handlePredict(this,'predict-s3b',15)">B. "someone used my account" — paraphrased</button>
+    </div>
+    <div class="selfcheck-ans" id="predict-s3b-ans">A is right! Exact words and numbers are keyword search's home turf. Paraphrased meaning is semantic search's job — that's option B, the fraud example from above.</div>
+  </div>
+
+  <div class="lab-marker">
+    <div class="lab-marker-icon">→</div>
+    <div>
+      <div class="lab-marker-title">Switch to VS Code now — run Tasks 4 and 5</div>
+      <div class="lab-marker-desc">Task 5 is this module's graded task. Come back here for Concept B once you've read your pass/fail count.</div>
+    </div>
+  </div>
+  <div class="quiz-marker">
+    <div class="quiz-marker-icon">📊</div>
+    <div>
+      <div class="quiz-title">AhaSlides checkpoint — after Tasks 4-5</div>
+      <div class="quiz-desc">Not graded — a question about the results you just read.</div>
+    </div>
+  </div>
+</section>
+
+<!-- S4 CONCEPT B — Python List to Real Vector Store -->
+<section class="section" id="s4" style="min-height:auto;padding-top:100px;padding-bottom:60px">
+  <div class="section-label">Concept B</div>
+  <div class="section-title">From Python List to Real Vector Store</div>
+  <div class="section-sub">Fine at 10 passages. Falls apart at 10 million. Here's why — and the fix.</div>
+
+  <div class="card-grid card-grid-2" style="margin-bottom:20px">
+    <div class="flip-card" onclick="flipCard(this,'flip-pylist')">
+      <div class="flip-card-inner">
+        <div class="flip-face flip-front">
+          <div class="flip-icon">🐍</div>
+          <div style="font-size:17px;font-weight:800;color:var(--white)">Python List</div>
+          <div class="flip-hint">👆 tap to flip</div>
+        </div>
+        <div class="flip-face flip-back">
+          <ul>
+            <li>Checks every item, one by one</li>
+            <li>Fine for 10 passages</li>
+            <li>Way too slow at millions</li>
+            <li>No built-in filtering</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="flip-card" onclick="flipCard(this,'flip-chroma')">
+      <div class="flip-card-inner">
+        <div class="flip-face flip-front">
+          <div class="flip-icon">🗄️</div>
+          <div style="font-size:17px;font-weight:800;color:var(--white)">Chroma</div>
+          <div class="flip-hint">👆 tap to flip</div>
+        </div>
+        <div class="flip-face flip-back">
+          <ul>
+            <li>Pre-organized for fast lookup</li>
+            <li>Fast even at millions</li>
+            <li>Filters by category, instantly</li>
+            <li>Built for real production</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-grid card-grid-2" style="margin-bottom:20px">
+    <div class="pipeline-container" id="list-pipeline-svg"></div>
+    <div class="pipeline-container" id="chroma-pipeline-svg"></div>
+  </div>
+
+  <div class="selfcheck" id="predict-s4">
+    <div class="selfcheck-q">🤔 Predict: at 10 million passages, which one is faster?</div>
+    <div class="predict-options">
+      <button class="btn predict-opt" data-correct="false" onclick="handlePredict(this,'predict-s4',15)">A. Python list</button>
+      <button class="btn predict-opt" data-correct="true" onclick="handlePredict(this,'predict-s4',15)">B. Chroma</button>
+    </div>
+    <div class="selfcheck-ans" id="predict-s4-ans">B, obviously — but let's see <em>how much</em> faster. Click below.</div>
+  </div>
+
+  <div class="playground">
+    <div class="pg-label">Try it — Watch the scan time</div>
+    <div class="pg-title">A plain list checks every single passage, one at a time</div>
+    <button class="btn btn-primary btn-sm" onclick="runScanDemo()" id="scan-btn">▶ Search 10 million passages</button>
+    <div class="scan-demo">
+      <span style="width:150px;flex-shrink:0;font-size:13px;color:var(--text)">🐍 Python list</span>
+      <div class="scan-track"><div class="scan-fill" id="scan-fill-list"></div></div>
+      <span class="scan-time" id="scan-time-list">—</span>
+    </div>
+    <div class="scan-demo">
+      <span style="width:150px;flex-shrink:0;font-size:13px;color:var(--text)">🗄️ Chroma (indexed)</span>
+      <div class="scan-track"><div class="scan-fill indexed" id="scan-fill-chroma"></div></div>
+      <span class="scan-time" id="scan-time-chroma">—</span>
+    </div>
+    <p style="font-size:12.5px;color:var(--dim);margin-top:10px">Illustrative, not a real benchmark. The real point: a list gets slower as it grows. Chroma barely notices.</p>
+  </div>
+
+  <div class="wow-marker">
+    <div style="font-size:26px" class="pulse">🤯</div>
+    <div>
+      <div style="font-size:14px;font-weight:800;color:var(--success)">~500× faster, same data</div>
+      <div style="font-size:12.5px;color:var(--dim);margin-top:3px">Nothing about the passages changed. Only how they're <strong style="color:var(--accent)">stored</strong> did.</div>
+    </div>
+  </div>
+
+  <div class="playground">
+    <div class="pg-label">Try it — Filter by category, like Google Maps</div>
+    <div class="pg-title">"Only show restaurants." Same idea, for your data.</div>
+    <div class="pipeline-container" id="filter-pipeline-svg"></div>
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+      <button class="btn btn-toggle active" id="filter-all" onclick="setFilter('all')">All categories</button>
+      <button class="btn btn-toggle" id="filter-fraud" onclick="setFilter('fraud');awardXP('filter-demo',10)">category = fraud</button>
+      <button class="btn btn-toggle" id="filter-loans" onclick="setFilter('loans');awardXP('filter-demo',10)">category = loans</button>
+    </div>
+    <div id="filter-chips"></div>
+    <p style="font-size:12.5px;color:var(--dim);margin-top:10px">Chroma throws out non-matching passages <em>before</em> comparing meaning. Greyed-out passages are never even checked.</p>
+  </div>
+
+  <div class="lab-marker">
+    <div class="lab-marker-icon">→</div>
+    <div>
+      <div class="lab-marker-title">Switch to VS Code now — run the Chroma cell</div>
+      <div class="lab-marker-desc">Reuses the exact embeddings from Task 2 — nothing recalculated. Then come back for the recap.</div>
+    </div>
+  </div>
+  <div class="quiz-marker">
+    <div class="quiz-marker-icon">📊</div>
+    <div>
+      <div class="quiz-title">AhaSlides checkpoint — after the Chroma cell</div>
+      <div class="quiz-desc">Last checkpoint for this session — not graded.</div>
+    </div>
+  </div>
+</section>
+
+<!-- S5 RECAP -->
+<section class="section" id="s5" style="min-height:auto;padding-top:60px;padding-bottom:40px">
+  <div class="section-label">Recap</div>
+  <div class="section-title">🏆 Look What You Just Learned</div>
+  <div class="card-grid card-grid-3">
+    <div class="card"><div class="accent-bar"></div><h4 style="color:var(--white);margin-bottom:6px">📍 A1 · Meaning = Geometry</h4><p style="font-size:13.5px;color:var(--text)">Embeddings turn meaning into numbers. Similar meaning lands close together.</p></div>
+    <div class="card"><div class="accent-bar"></div><h4 style="color:var(--white);margin-bottom:6px">🆚 A2 · Search Battle</h4><p style="font-size:13.5px;color:var(--text)">Semantic search finds what keyword search can't see. Keyword still wins on exact words and numbers.</p></div>
+    <div class="card"><div class="accent-bar"></div><h4 style="color:var(--white);margin-bottom:6px">🗄️ B · Real Vector Store</h4><p style="font-size:13.5px;color:var(--text)">Chroma swaps your list-and-loop for a fast, indexed store that filters by category too.</p></div>
+  </div>
+  <div class="card" style="margin-top:16px;text-align:center">
+    <div style="font-size:13px;color:var(--dim)">Your session score</div>
+    <div style="font-size:28px;font-weight:800;color:var(--accent)" id="recap-xp">⭐ 0 XP earned</div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h4 style="color:var(--white);margin-bottom:8px">📅 Coming in Part 2, next session</h4>
+    <p style="font-size:14px;color:var(--text);line-height:1.7">Qdrant — another vector store, one you run yourself. You'll compare it with Chroma side by side.</p>
+  </div>
+</section>
+
+<!-- LAB -->
+<section class="section" id="labs" style="align-items:stretch;min-height:auto;padding-top:64px">
+  <div class="section-label">Your Lab</div>
+  <div class="section-title">D2 · M1.4 + M2.2 Notebook — Part 1</div>
+  <div class="section-sub">Worked interleaved with this page · full instructions in the lab README</div>
+
+  <div class="ach-grid fade-in">
+    <div class="ach-card"><div class="ach-icon">🥈</div><div class="ach-name">Silver</div><div class="ach-desc">M1.4 attempted, autograder run at least once</div></div>
+    <div class="ach-card"><div class="ach-icon">🥇</div><div class="ach-name">Gold</div><div class="ach-desc">M1.4 autograder passes (≥4/5 fixed queries)</div></div>
+    <div class="ach-card"><div class="ach-icon">💎</div><div class="ach-name">Diamond</div><div class="ach-desc">Gold + a perfect 5/5</div></div>
+  </div>
+
+  <div class="lab-card fade-in">
+    <span class="lab-badge">M1.4 · Individual · Autograded</span>
+    <h3>🚀 Build: semantic search, then a real vector store</h3>
+    <p class="desc">Fully working code — nothing to write. Run each task's cell, read the output, and follow the lab-marker cues back and forth with this page.</p>
+    <ul class="lab-tasks">
+      <li>Task 1 — warm-up: rank 3 sentences by meaning against 1 query</li>
+      <li>Task 2 — embed and index all 10 real Meridian passages</li>
+      <li>Task 4 — semantic vs. keyword search, side by side</li>
+      <li>Task 5 — fixed query evaluation (graded)</li>
+      <li>Chroma — real vector store with metadata filtering</li>
+    </ul>
+    <p style="font-size:13.5px;color:var(--dim);margin-top:14px">Full steps: <code style="background:#080D18;padding:2px 6px;border-radius:4px;color:var(--accent)">Day2/labs/readme/D2_M1.4_M2.2_VectorStores_README.md</code> · Starter notebook: <code style="background:#080D18;padding:2px 6px;border-radius:4px;color:var(--accent)">Day2/labs/starter/D2_M1.4_M2.2_VectorStores_Starter.ipynb</code></p>
+  </div>
+</section>
+
+<div class="quiz-marker fade-in" style="max-width:900px;margin:0 48px 60px;background:#10B9811A;border-color:#10B98159">
+  <div>
+    <div class="quiz-title" style="color:var(--success)">✅ Part 1 Complete — M1.4 graded, Chroma running</div>
+    <div class="quiz-desc">Semantic search is built and graded, and a real vector store is up with metadata filtering. Part 2, next session: Qdrant, and choosing between the two for a real deployment.</div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+// XP / PROGRESS SYSTEM — shared by every interactive widget on this page
+// ══════════════════════════════════════════════════════════════════
+let totalXP = 0;
+const xpAwarded = new Set();
+function awardXP(key, amount){
+  if (xpAwarded.has(key)) return;
+  xpAwarded.add(key);
+  totalXP += amount;
+  const nav = document.getElementById('nav-xp');
+  if (nav) nav.textContent = `⭐ ${totalXP} XP`;
+  const recap = document.getElementById('recap-xp');
+  if (recap) recap.textContent = `⭐ ${totalXP} XP earned`;
+  showXPToast(`⭐ +${amount} XP`);
+}
+function showXPToast(msg){
+  const toast = document.getElementById('xp-toast');
+  if (!toast) return;
+  toast.textContent = msg;
+  toast.classList.remove('show');
+  void toast.offsetWidth;
+  toast.classList.add('show');
+  clearTimeout(window._xpToastTimer);
+  window._xpToastTimer = setTimeout(()=> toast.classList.remove('show'), 1400);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// SVG PIPELINE DIAGRAMS — one reusable renderer, used 6 times on this page
+// ══════════════════════════════════════════════════════════════════
+function renderPipeline(containerId, nodes, color){
+  const w = 128, h = 60, gap = 34;
+  const totalW = nodes.length * w + (nodes.length - 1) * gap;
+  let svg = `<svg viewBox="0 0 ${totalW} ${h}" class="pipeline-svg" preserveAspectRatio="xMidYMid meet">`;
+  nodes.forEach((n, i) => {
+    const x = i * (w + gap);
+    svg += `<rect x="${x}" y="6" width="${w}" height="${h-12}" rx="10" style="fill:var(--card2);stroke:${color};stroke-width:2"/>`;
+    svg += `<text x="${x + w/2}" y="${h/2 - 4}" text-anchor="middle" class="pipe-text" style="fill:var(--white);font-size:16px">${n.icon}</text>`;
+    svg += `<text x="${x + w/2}" y="${h/2 + 15}" text-anchor="middle" class="pipe-text" style="fill:var(--text)">${n.label}</text>`;
+    if (i < nodes.length - 1){
+      svg += `<line x1="${x+w+4}" y1="${h/2}" x2="${x+w+gap-6}" y2="${h/2}" style="stroke:${color};stroke-width:2.5" marker-end="url(#arrowhead)"/>`;
+    }
+  });
+  svg += `</svg>`;
+  const el = document.getElementById(containerId);
+  if (el) el.innerHTML = svg;
+}
+
+function renderMeaningMap(containerId){
+  const svg = `<svg viewBox="0 0 300 190" class="mini-svg">
+    <line x1="20" y1="170" x2="290" y2="170" style="stroke:var(--border);stroke-width:1"/>
+    <line x1="20" y1="10" x2="20" y2="170" style="stroke:var(--border);stroke-width:1"/>
+    <line x1="185" y1="70" x2="205" y2="90" style="stroke:var(--success);stroke-width:1.5;stroke-dasharray:3,3"/>
+    <circle cx="185" cy="70" r="7" style="fill:var(--accent)"/>
+    <text x="185" y="55" text-anchor="middle" class="pipe-text" style="fill:var(--accent)">❓ Query</text>
+    <circle cx="205" cy="90" r="7" style="fill:var(--success)"/>
+    <text x="215" y="112" text-anchor="middle" class="pipe-text" style="fill:var(--success);font-size:10px">Savings-rate sentence</text>
+    <circle cx="70" cy="150" r="6" style="fill:var(--dim)"/>
+    <text x="70" y="168" text-anchor="middle" class="pipe-text" style="fill:var(--dim);font-size:10px">Cat on windowsill</text>
+    <circle cx="110" cy="130" r="6" style="fill:var(--dim)"/>
+    <text x="118" y="118" text-anchor="middle" class="pipe-text" style="fill:var(--dim);font-size:10px">Dog in the park</text>
+  </svg>`;
+  const el = document.getElementById(containerId);
+  if (el) el.innerHTML = svg;
+}
+
+function renderCosineAngle(containerId){
+  const ox = 55, oy = 130;
+  const svg = `<svg viewBox="0 0 260 150" class="mini-svg">
+    <line x1="${ox}" y1="${oy}" x2="210" y2="30" style="stroke:var(--accent);stroke-width:3" marker-end="url(#arrowhead)"/>
+    <text x="150" y="30" class="pipe-text" style="fill:var(--accent);font-size:10px">A: "I love pizza"</text>
+    <line x1="${ox}" y1="${oy}" x2="200" y2="40" style="stroke:#8FC0E8;stroke-width:3" marker-end="url(#arrowhead)"/>
+    <text x="140" y="70" class="pipe-text" style="fill:#8FC0E8;font-size:10px">B: "I adore pizza"</text>
+    <line x1="${ox}" y1="${oy}" x2="65" y2="20" style="stroke:var(--danger);stroke-width:3" marker-end="url(#arrowhead)"/>
+    <text x="10" y="15" class="pipe-text" style="fill:var(--danger);font-size:10px">C: "Stock market crashed"</text>
+  </svg>
+  <div style="display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:12px">
+    <span style="color:var(--text)">A vs B: <strong style="color:var(--success)">1.00</strong> (same direction)</span>
+    <span style="color:var(--text)">A vs C: <strong style="color:var(--danger)">0.24</strong> (very different)</span>
+  </div>`;
+  const el = document.getElementById(containerId);
+  if (el) el.innerHTML = svg;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// FLIP CARDS
+// ══════════════════════════════════════════════════════════════════
+function flipCard(el, xpKey){
+  el.classList.toggle('flipped');
+  if (xpKey) awardXP(xpKey, 5);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// STORY CARD — Sarah / John, staggered reveal
+// ══════════════════════════════════════════════════════════════════
+function playStory(){
+  const lines = document.querySelectorAll('#story-lines .story-line');
+  lines.forEach((el, i) => setTimeout(()=> el.classList.add('show'), i * 850));
+  const btn = document.getElementById('story-btn');
+  if (btn) btn.textContent = '↻ Replay the calls';
+  awardXP('story', 10);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// PREDICT-AND-REVEAL — shared by every MCQ self-check on this page
+// ══════════════════════════════════════════════════════════════════
+function handlePredict(btn, groupId, xp){
+  const group = document.getElementById(groupId);
+  const opts = group.querySelectorAll('.predict-opt');
+  opts.forEach(o => {
+    o.disabled = true;
+    if (o.dataset.correct === 'true') o.classList.add('predict-correct');
+    else if (o === btn) o.classList.add('predict-wrong');
+  });
+  const ans = document.getElementById(groupId + '-ans');
+  if (ans) ans.classList.add('show');
+  if (xp) awardXP(groupId, xp);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// CONCEPT A1 — similarity reveal (canned, illustrative scores matching real relative direction)
+// ══════════════════════════════════════════════════════════════════
+function revealSimilarity(){
+  const data = [
+    {label:"Meridian savings-rate sentence", score:0.62},
+    {label:"Cat on the windowsill", score:0.09},
+    {label:"Dog running in the park", score:0.06},
+  ];
+  const container = document.getElementById('sim-bars');
+  container.innerHTML = data.map(d => `
+    <div class="bar-row">
+      <div class="bar-label">${d.label}</div>
+      <div class="bar-track"><div class="bar-fill" id="bar-${d.label.replace(/\s/g,'')}" style="width:0%"></div></div>
+      <div class="bar-pct">${(d.score*100).toFixed(0)}%</div>
+    </div>`).join('');
+  setTimeout(()=>{
+    data.forEach(d => {
+      const el = document.getElementById(`bar-${d.label.replace(/\s/g,'')}`);
+      if (el) el.style.width = (d.score*100) + '%';
+    });
+  }, 50);
+  document.getElementById('sim-btn').textContent = '↻ Run again';
+  awardXP('sim-reveal', 10);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// CONCEPT A2 — cosine similarity toy example (now a vector-angle SVG, not bars)
+// ══════════════════════════════════════════════════════════════════
+function revealCosineToy(){
+  renderCosineAngle('cosine-bars');
+  document.getElementById('cosine-btn').textContent = '↻ Run again';
+  awardXP('cosine-toy', 10);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// CONCEPT A2 — keyword vs semantic method toggle (real data: D1_M1.4_banking_passages.json,
+// query "Someone used my account without my permission.", correct answer = passage 8, fraud.
+// Keyword scores computed directly from the lab's own keyword_search() function — 5-way tie at
+// 1 shared word each (passages 2,3,4,6,8); Python's stable sort keeps original list order on a
+// tie, so passage 2 (savings rate) wins by accident, not passage 8. Semantic scores below are
+// illustrative, matching the real relative direction confirmed in Task 4.)
+// ══════════════════════════════════════════════════════════════════
+function setMethod(m){
+  document.getElementById('method-keyword').classList.toggle('active', m==='keyword');
+  document.getElementById('method-semantic').classList.toggle('active', m==='semantic');
+  const out = document.getElementById('method-output');
+  if (m === 'keyword'){
+    out.innerHTML = `<div style="font-size:13px;color:var(--dim);margin-bottom:8px">Real word-overlap scores (5-way tie at the top — id 8, the correct fraud passage, is one of the tied 5):</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text)">
+      id 2 (accounts, savings rate) &nbsp;→&nbsp; 1 shared word ("account") &nbsp;<span style="color:var(--danger)">← picked, by tie order</span><br>
+      id 3 (cards, credit limit) &nbsp;→&nbsp; 1 shared word ("account")<br>
+      id 4 (accounts, estate transfer) &nbsp;→&nbsp; 1 shared word ("account")<br>
+      id 6 (transfers, wire fee) &nbsp;→&nbsp; 1 shared word ("account")<br>
+      id 8 (fraud, correct answer) &nbsp;→&nbsp; 1 shared word ("someone")<br>
+      <span style="color:var(--dim)">everything else</span> &nbsp;→&nbsp; 0 shared words
+      </div>
+      <div style="margin-top:10px;color:var(--danger);font-weight:700;font-size:13px">🔤 Top result: id 2 — WRONG passage. Tied with the correct answer, wins only by list order.</div>`;
+  } else {
+    out.innerHTML = `<div style="font-size:13px;color:var(--dim);margin-bottom:8px">Meaning similarity with each passage (illustrative):</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text)">
+      id 8 (fraud, correct answer) &nbsp;→&nbsp; 0.58 similarity &nbsp;<span style="color:var(--success)">← clear winner</span><br>
+      id 2 (accounts, savings rate) &nbsp;→&nbsp; 0.24 similarity<br>
+      id 9 (accounts, biometric login) &nbsp;→&nbsp; 0.19 similarity
+      </div>
+      <div style="margin-top:10px;color:var(--success);font-weight:700;font-size:13px">🧠 Top result: id 8 — CORRECT. No tie, no lucky word overlap needed.</div>`;
+  }
+  awardXP('method-demo', 10);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// CONCEPT A2 — keyword-wins example (real data: query "How do I get a higher spending limit on
+// my credit card?", correct answer = passage 3. Scores computed directly from keyword_search().)
+// ══════════════════════════════════════════════════════════════════
+function revealKeywordWin(){
+  const data = [
+    {label:"id 3 (cards, credit limit) — correct answer", score:4, max:4},
+    {label:"id 5 (cards, ATM withdrawal limit)", score:2, max:4},
+    {label:"id 6 (transfers, wire fee)", score:2, max:4},
+    {label:"id 7 (loans, personal loan)", score:2, max:4},
+  ];
+  const container = document.getElementById('kwwin-bars');
+  container.innerHTML = data.map((d,i) => `
+    <div class="bar-row">
+      <div class="bar-label" style="width:300px">${d.label}</div>
+      <div class="bar-track"><div class="bar-fill" id="kwbar-${i}" style="width:0%"></div></div>
+      <div class="bar-pct">${d.score} words</div>
+    </div>`).join('');
+  setTimeout(()=>{
+    data.forEach((d,i) => {
+      const el = document.getElementById(`kwbar-${i}`);
+      if (el) el.style.width = (d.score/4*100) + '%';
+    });
+  }, 50);
+  document.getElementById('kwwin-btn').textContent = '↻ Run again';
+  document.getElementById('kwwin-note').style.display = 'block';
+  awardXP('kwwin-reveal', 10);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// CONCEPT B — scan-time demo
+// ══════════════════════════════════════════════════════════════════
+function runScanDemo(){
+  const listFill = document.getElementById('scan-fill-list');
+  const chromaFill = document.getElementById('scan-fill-chroma');
+  const listTime = document.getElementById('scan-time-list');
+  const chromaTime = document.getElementById('scan-time-chroma');
+  listFill.style.width = '0%'; chromaFill.style.width = '0%';
+  listTime.textContent = '...'; chromaTime.textContent = '...';
+  setTimeout(()=>{ chromaFill.style.width = '8%'; chromaTime.textContent = '~4 ms'; }, 100);
+  setTimeout(()=>{ listFill.style.width = '95%'; listTime.textContent = '~2100 ms'; }, 150);
+  awardXP('scan-demo', 10);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// CONCEPT B — metadata filter demo
+// ══════════════════════════════════════════════════════════════════
+const PASSAGE_CATEGORIES = [
+  {id:1, category:"cards"}, {id:2, category:"accounts"}, {id:3, category:"cards"},
+  {id:4, category:"accounts"}, {id:5, category:"cards"}, {id:6, category:"transfers"},
+  {id:7, category:"loans"}, {id:8, category:"fraud"}, {id:9, category:"accounts"}, {id:10, category:"loans"},
+];
+function setFilter(cat){
+  ["all","fraud","loans"].forEach(c => document.getElementById(`filter-${c}`).classList.toggle('active', c===cat));
+  const chips = PASSAGE_CATEGORIES.map(p => {
+    const match = cat === 'all' || p.category === cat;
+    return `<span class="filter-chip ${match?'match':'excluded'}">id ${p.id} · ${p.category}</span>`;
+  }).join('');
+  document.getElementById('filter-chips').innerHTML = chips;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// SHARED UI HELPERS
+// ══════════════════════════════════════════════════════════════════
+function toggleCheck(btn){
+  const ans = btn.nextElementSibling;
+  ans.classList.toggle('show');
+  btn.textContent = ans.classList.contains('show') ? 'Hide answer ↑' : 'Reveal answer ↓';
+}
+function initNav(){
+  if (typeof IntersectionObserver === 'undefined') return;
+  const pills = document.querySelectorAll('.nav-pill');
+  const sections = document.querySelectorAll('.section');
+  const prog = document.getElementById('nav-prog');
+  const progFill = document.getElementById('progress-fill');
+  const obs = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const id = e.target.id;
+        pills.forEach(p=>p.classList.toggle('active',p.getAttribute('href')==='#'+id));
+        const idx = Array.from(sections).findIndex(s=>s.id===id);
+        prog.textContent = `Section ${idx+1} / ${sections.length}`;
+        if (progFill) progFill.style.width = ((idx+1)/sections.length*100) + '%';
+      }
+    });
+  },{threshold:0.35});
+  sections.forEach(s=>obs.observe(s));
+}
+function safeInit(name, fn){
+  try { fn(); } catch (e) { console.error('Widget init failed:', name, e); }
+}
+function init(){
+  safeInit('filterDemo', () => setFilter('all'));
+  safeInit('scrollNav', initNav);
+  safeInit('embedPipeline', () => renderPipeline('embed-pipeline-svg',
+    [{icon:'💬',label:'Sentence'},{icon:'🧠',label:'AI Model'},{icon:'📍',label:'Vector'},{icon:'🗺️',label:'Meaning Space'},{icon:'🎯',label:'Nearest Match'},{icon:'✅',label:'Answer'}],
+    'var(--accent)'));
+  safeInit('meaningMap', () => renderMeaningMap('mmap-svg'));
+  safeInit('keywordPipeline', () => renderPipeline('keyword-pipeline-svg',
+    [{icon:'❓',label:'Question'},{icon:'🔤',label:'Word Match'},{icon:'❌',label:'Wrong Result'}],
+    'var(--danger)'));
+  safeInit('semanticPipeline', () => renderPipeline('semantic-pipeline-svg',
+    [{icon:'❓',label:'Question'},{icon:'🧠',label:'Embedding'},{icon:'🎯',label:'Similarity'},{icon:'✅',label:'Correct Doc'}],
+    'var(--success)'));
+  safeInit('listPipeline', () => renderPipeline('list-pipeline-svg',
+    [{icon:'🐍',label:'Python List'},{icon:'🔁',label:'Loop'},{icon:'📚',label:'Millions'},{icon:'🐢',label:'Slow'}],
+    'var(--danger)'));
+  safeInit('chromaPipeline', () => renderPipeline('chroma-pipeline-svg',
+    [{icon:'🗄️',label:'Chroma'},{icon:'📇',label:'Index'},{icon:'🎯',label:'Nearest'},{icon:'⚡',label:'Fast'}],
+    'var(--success)'));
+  safeInit('filterPipeline', () => renderPipeline('filter-pipeline-svg',
+    [{icon:'📋',label:'10 passages'},{icon:'🔍',label:'category = fraud'},{icon:'✅',label:'2 passages left'}],
+    'var(--accent)'));
+}
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

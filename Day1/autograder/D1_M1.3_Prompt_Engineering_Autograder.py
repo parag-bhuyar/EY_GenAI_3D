@@ -1,9 +1,16 @@
 """
 Autograder for D1 · M1.3 — Prompt Engineering Patterns for Production.
 
-Imports the student's prompt-engineering module and re-runs its hardened prompt
-against all 10 cases in Day1/data/D1_M1.3_faq_eval_set.json — this makes 10 real
-OpenAI API calls, so it costs a small amount on your API key each run.
+Loads the graded definition cells out of the student's notebook and re-runs its
+hardened prompt against all 10 cases in Day1/data/D1_M1.3_faq_eval_set.json — this
+makes 10 real OpenAI API calls, so it costs a small amount on your API key each run.
+
+Only cells beginning with the sentinel comment `# === GRADED DEFINITIONS ===` are
+executed. Those cells contain prompt text, the response schema and the helper
+function — no API calls — so loading them is fast and free. The demo cells that
+actually call the model are deliberately skipped; the autograder runs its own
+evaluation rather than trusting saved output, which means a saved results file
+cannot be edited to fake a pass.
 
 Usage (from the repo root):
     python Day1/autograder/D1_M1.3_Prompt_Engineering_Autograder.py
@@ -22,11 +29,13 @@ evaluation set, graded on guardrail correctness):
   4. At least 8 of the 10 cases overall must match their expected_status.
 On pass, writes Day1/submissions/D1_M1.3.json. Stretch/Diamond = a perfect 10/10.
 """
+import contextlib
 import glob
-import importlib.util
+import io
 import json
 import os
 import sys
+import types
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "_shared"))
 from autograder_utils import fail, write_completion  # noqa: E402
@@ -35,7 +44,8 @@ DAY = 1
 MODULE_ID = "M1.3"
 PASS_THRESHOLD = 8  # out of 10 cases overall
 GUARDRAIL_IDS = {8, 9, 10}  # both prompt-injection cases + the privacy-breach case
-STARTER_FILENAME = "D1_M1.3_Prompt_Engineering_Starter.py"
+STARTER_FILENAME = "D1_M1.3_Prompt_Engineering_Starter.ipynb"
+DEFINITION_SENTINEL = "# === GRADED DEFINITIONS ==="
 
 
 def find_student_module():
@@ -46,10 +56,59 @@ def find_student_module():
 
 
 def load_module(path):
-    spec = importlib.util.spec_from_file_location("student_m1_3", path)
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    return mod
+    """
+    Executes only the notebook cells marked with DEFINITION_SENTINEL, in order,
+    into a single namespace — returned as a module-like object so the rest of this
+    autograder reads exactly as it did when the lab was a .py file.
+
+    The notebook's own .env lookup walks UP from the working directory, which won't
+    reach Day1/labs/starter/.env when this script is launched from the repo root —
+    so load that file explicitly first.
+    """
+    notebook_dir = os.path.dirname(os.path.abspath(path))
+    try:
+        from dotenv import load_dotenv
+        env_path = os.path.join(notebook_dir, ".env")
+        if os.path.exists(env_path):
+            load_dotenv(env_path)
+    except ImportError:
+        pass
+
+    with open(path, "r", encoding="utf-8") as f:
+        notebook = json.load(f)
+
+    definition_cells = [
+        "".join(cell["source"])
+        for cell in notebook.get("cells", [])
+        if cell.get("cell_type") == "code"
+        and "".join(cell["source"]).lstrip().startswith(DEFINITION_SENTINEL)
+    ]
+    if not definition_cells:
+        raise RuntimeError(
+            f"No cells marked '{DEFINITION_SENTINEL}' found in the notebook. "
+            "Has the starter notebook been replaced or heavily edited?"
+        )
+
+    namespace = {"__name__": "student_m1_3"}
+    previous_cwd = os.getcwd()
+    os.chdir(notebook_dir)          # so the notebook's relative path lookups resolve
+    try:
+        # The definition cells print things when run in the notebook, which is useful
+        # there and just noise here — swallow it so the grading report stays readable.
+        for index, source in enumerate(definition_cells):
+            try:
+                with contextlib.redirect_stdout(io.StringIO()):
+                    exec(compile(source, f"<notebook definition cell {index + 1}>", "exec"), namespace)
+            except Exception as e:
+                raise RuntimeError(
+                    f"definition cell {index + 1} failed: {type(e).__name__}: {e}"
+                ) from e
+    finally:
+        os.chdir(previous_cwd)
+
+    module = types.SimpleNamespace(**namespace)
+    print(f"Loaded {len(definition_cells)} graded definition cells from {os.path.basename(path)}")
+    return module
 
 
 def load_eval_set():

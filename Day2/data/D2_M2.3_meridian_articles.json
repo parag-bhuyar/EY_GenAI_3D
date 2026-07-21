@@ -1,0 +1,362 @@
+[
+  {
+    "id": 1,
+    "title": "Salary credit delayed - employer NEFT batch not settled",
+    "text": "If your salary has not been credited on the expected date, the most common cause is that your employer's NEFT salary batch has not yet settled. Employers submit salary files in bulk and the batch clears in the next available settlement window, usually by 6pm on the following working day. No action is needed from you unless the credit is still missing after that.",
+    "product": "accounts",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2026-03-11"
+  },
+  {
+    "id": 2,
+    "title": "Check your account balance in the mobile app",
+    "text": "Open the Meridian app and your primary account balance appears on the home screen. Tap the account card to see available balance, ledger balance and the last ten transactions. You can add other accounts from Settings.",
+    "product": "accounts",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2026-01-20"
+  },
+  {
+    "id": 3,
+    "title": "Payment not received - tracing an incoming transfer",
+    "text": "If money someone sent you has not arrived, ask the sender for the UTR reference number from their bank. With the UTR our team can trace where the transfer is sitting. Most incoming transfers that appear stuck are simply waiting for the next settlement window.",
+    "product": "payments",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2026-02-02"
+  },
+  {
+    "id": 4,
+    "title": "NEFT / RTGS / IMPS cut-off times and settlement windows",
+    "text": "NEFT settles in half-hourly batches on all working days. RTGS is real time between 7am and 6pm. IMPS runs 24x7 including Sundays and bank holidays. Transfers submitted after the cut-off are queued for the next available window.",
+    "product": "payments",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2026-04-05"
+  },
+  {
+    "id": 5,
+    "title": "Salary account benefits and zero-balance rules",
+    "text": "A Meridian salary account is a zero-balance account with no minimum balance penalty, free unlimited ATM withdrawals and a complimentary debit card. Your salary account stays a salary account as long as a salary credit is received at least once in any three month period. Salary account holders also get preferential rates on personal loans and a free salary overdraft facility.",
+    "product": "accounts",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2026-02-18"
+  },
+  {
+    "id": 6,
+    "title": "Failed transaction refund timeline",
+    "text": "If a transaction fails but the amount is debited, the reversal is automatic. Card and UPI failures reverse within five working days. If the amount is not returned within that window, raise a dispute from the transaction detail screen.",
+    "product": "payments",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2026-01-09"
+  },
+  {
+    "id": 7,
+    "title": "Update employer details on your salary account",
+    "text": "To change the employer linked to your salary account, submit your latest offer letter or payslip through the app under Profile then Employment. Your salary account benefits continue uninterrupted while the update is processed.",
+    "product": "accounts",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2025-12-14"
+  },
+  {
+    "id": 8,
+    "title": "Credit card payment not reflected",
+    "text": "A card payment made through another bank can take up to three working days to appear on your Meridian card statement. Reference example TXN-99213 shows a payment received on day one and posted on day three. If the payment is still not visible after three working days, contact us with the reference number.",
+    "product": "cards",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2026-03-01"
+  },
+  {
+    "id": 9,
+    "title": "Minimum balance rules for regular savings accounts",
+    "text": "A regular savings account requires an average monthly balance of five thousand rupees in metro branches and two thousand rupees elsewhere. Falling below this attracts a service charge. Salary accounts are exempt from this requirement.",
+    "product": "accounts",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2026-02-25"
+  },
+  {
+    "id": 10,
+    "title": "How to open a fixed deposit online",
+    "text": "Fixed deposits can be opened from the app in under two minutes. Choose the amount and tenure, and the deposit is funded instantly from your savings account. Premature closure attracts a one percent rate penalty.",
+    "product": "deposits",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2026-01-30"
+  },
+  {
+    "id": 11,
+    "title": "Savings account interest rates and how interest is paid",
+    "text": "Savings balances earn three percent per annum up to one lakh and three and a half percent above that. Interest is calculated daily and credited every quarter.",
+    "product": "accounts",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2026-04-01"
+  },
+  {
+    "id": 12,
+    "title": "Close a savings account",
+    "text": "Accounts can be closed at any branch with photo identification. Clear any outstanding dues and return unused cheque leaves first. Accounts closed within twelve months of opening attract a closure charge.",
+    "product": "accounts",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2025-11-22"
+  },
+  {
+    "id": 13,
+    "title": "Add or remove a joint account holder",
+    "text": "Adding a joint holder requires both parties to visit a branch with identification and complete a fresh account mandate. Removal requires written consent from the holder being removed.",
+    "product": "accounts",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2025-10-08"
+  },
+  {
+    "id": 14,
+    "title": "Order a new cheque book",
+    "text": "Request a cheque book from the app under Services. Twenty five leaves are dispatched free each year and additional books carry a small charge. Delivery takes five to seven working days.",
+    "product": "accounts",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2026-01-14"
+  },
+  {
+    "id": 15,
+    "title": "Dormant and inactive account reactivation",
+    "text": "An account with no customer-initiated transaction for two years is marked dormant. Reactivate it by completing a fresh KYC at any branch. No charge applies for reactivation.",
+    "product": "accounts",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2025-09-30"
+  },
+  {
+    "id": 16,
+    "title": "UPI transaction limits per day",
+    "text": "UPI allows up to one lakh rupees per day across all apps linked to your account. New UPI registrations are capped at five thousand rupees for the first twenty four hours.",
+    "product": "payments",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2026-03-19"
+  },
+  {
+    "id": 17,
+    "title": "Set up a standing instruction for recurring payments",
+    "text": "Standing instructions can be created from the app for a fixed amount and frequency. The first execution happens on the next scheduled date, not immediately.",
+    "product": "payments",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2026-02-11"
+  },
+  {
+    "id": 18,
+    "title": "Stop or cancel a scheduled transfer",
+    "text": "Scheduled transfers can be cancelled up to one hour before execution from the Scheduled tab. Once a transfer has entered a settlement batch it cannot be recalled.",
+    "product": "payments",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2026-02-11"
+  },
+  {
+    "id": 19,
+    "title": "Add a new beneficiary for fund transfers",
+    "text": "New beneficiaries are activated after a thirty minute cooling period, during which a reduced transfer limit applies. You will need the account number and IFSC code.",
+    "product": "payments",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2026-01-05"
+  },
+  {
+    "id": 20,
+    "title": "Find the IFSC code for your branch",
+    "text": "Your IFSC code appears on the first page of your cheque book and in the app under Account Details. Meridian retail branches use the prefix MERI0.",
+    "product": "payments",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2025-12-02"
+  },
+  {
+    "id": 21,
+    "title": "Report a lost or stolen debit card",
+    "text": "Block the card immediately from the app under Cards, or call the twenty four hour helpline. A replacement is dispatched within three working days to your registered address.",
+    "product": "cards",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2026-03-22"
+  },
+  {
+    "id": 22,
+    "title": "Credit card statement date and payment due date",
+    "text": "Your statement is generated on the same date each month and payment is due twenty days later. Paying only the minimum due carries interest on the full outstanding balance.",
+    "product": "cards",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2026-02-08"
+  },
+  {
+    "id": 23,
+    "title": "Dispute an unrecognised card transaction",
+    "text": "Raise a dispute within sixty days of the statement date from the transaction detail screen. A provisional credit may be issued while the investigation is open.",
+    "product": "cards",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2026-01-27"
+  },
+  {
+    "id": 24,
+    "title": "Convert a large card purchase into EMI",
+    "text": "Purchases above five thousand rupees can be converted to EMI within thirty days of the transaction. Tenures of three, six, nine and twelve months are available.",
+    "product": "cards",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2026-03-05"
+  },
+  {
+    "id": 25,
+    "title": "Increase your credit card limit",
+    "text": "Limit increase requests are assessed on income and repayment history. Submit your latest three payslips or income tax return through the app.",
+    "product": "cards",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2025-12-19"
+  },
+  {
+    "id": 26,
+    "title": "Personal loan eligibility and documents required",
+    "text": "Salaried applicants need a minimum monthly income of twenty five thousand rupees and six months of continuous employment. Required documents are identity proof, address proof and three months of payslips.",
+    "product": "loans",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2026-02-14"
+  },
+  {
+    "id": 27,
+    "title": "Home loan EMI holiday and moratorium requests",
+    "text": "A moratorium may be granted for up to three months in cases of documented financial hardship. Interest continues to accrue during the moratorium period.",
+    "product": "loans",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2025-11-11"
+  },
+  {
+    "id": 28,
+    "title": "Foreclose a personal loan early",
+    "text": "Personal loans can be foreclosed after twelve EMIs. A foreclosure charge of two percent applies on the outstanding principal.",
+    "product": "loans",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2026-01-18"
+  },
+  {
+    "id": 29,
+    "title": "Why was my loan application declined",
+    "text": "Applications are declined most often for insufficient income, a low credit score or an existing high debt to income ratio. You may reapply after six months.",
+    "product": "loans",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2025-10-25"
+  },
+  {
+    "id": 30,
+    "title": "Someone used my account without permission",
+    "text": "If you see a transaction you did not authorise, block your cards from the app immediately and call the fraud helpline. Report unauthorised transactions within three working days for zero liability protection.",
+    "product": "fraud",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2026-03-28"
+  },
+  {
+    "id": 31,
+    "title": "Recognise and report a phishing message",
+    "text": "Meridian will never ask for your PIN, password or one time passcode by message or call. Forward suspicious messages to our reporting address and delete them.",
+    "product": "fraud",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2026-02-20"
+  },
+  {
+    "id": 32,
+    "title": "Reset your net banking password",
+    "text": "Use Forgot Password on the login screen and verify with the one time passcode sent to your registered mobile number. Three failed attempts lock the profile for thirty minutes.",
+    "product": "security",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2026-01-11"
+  },
+  {
+    "id": 33,
+    "title": "Complete your KYC update",
+    "text": "Periodic KYC is required every ten years for low risk customers. Upload identity and address proof through the app or visit any branch.",
+    "product": "kyc",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2026-02-06"
+  },
+  {
+    "id": 34,
+    "title": "Change your registered mobile number",
+    "text": "The registered mobile number can be changed at any branch or ATM with card verification. For security, online transaction limits are reduced for twenty four hours after the change.",
+    "product": "kyc",
+    "segment": "retail",
+    "region": "IN",
+    "updated": "2025-12-29"
+  },
+  {
+    "id": 35,
+    "title": "Corporate current account minimum balance requirements",
+    "text": "Corporate current accounts require an average quarterly balance of five lakh rupees. Shortfall charges are levied at the end of each quarter.",
+    "product": "accounts",
+    "segment": "corporate",
+    "region": "IN",
+    "updated": "2026-02-16"
+  },
+  {
+    "id": 36,
+    "title": "Bulk salary upload for corporate payroll clients",
+    "text": "Payroll clients upload the salary file through the corporate portal before 4pm for same day NEFT batch submission. Files uploaded after the cut-off settle in the next working day batch.",
+    "product": "payments",
+    "segment": "corporate",
+    "region": "IN",
+    "updated": "2026-03-09"
+  },
+  {
+    "id": 37,
+    "title": "Corporate trade finance letter of credit process",
+    "text": "Letters of credit are issued within two working days of complete documentation. Amendments require written confirmation from both parties.",
+    "product": "trade",
+    "segment": "corporate",
+    "region": "IN",
+    "updated": "2025-11-04"
+  },
+  {
+    "id": 38,
+    "title": "Direct deposit not received - US payroll",
+    "text": "If your direct deposit has not landed, confirm with your employer that the ACH file was submitted. ACH credits post on the settlement date, which is usually one business day after submission.",
+    "product": "accounts",
+    "segment": "retail",
+    "region": "US",
+    "updated": "2026-03-13"
+  },
+  {
+    "id": 39,
+    "title": "Wire transfer cut-off times - US branches",
+    "text": "Domestic wires submitted before 4pm Eastern settle the same business day. International wires require an additional business day for correspondent processing.",
+    "product": "payments",
+    "segment": "retail",
+    "region": "US",
+    "updated": "2026-02-27"
+  },
+  {
+    "id": 40,
+    "title": "Overdraft protection on US checking accounts",
+    "text": "Overdraft protection links your checking account to a savings account or line of credit. A transfer fee applies each time the protection is used.",
+    "product": "accounts",
+    "segment": "retail",
+    "region": "US",
+    "updated": "2026-01-23"
+  }
+]
