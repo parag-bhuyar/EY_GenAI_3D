@@ -1,3 +1,6 @@
 import sys
 print(sys.executable)
 !"{sys.executable}" -m pip install langchain-openai
+
+------------------- NEW PIP INSTALL----------------------
+pip install python-dotenv openai pydantic numpy rank_bm25 chromadb qdrant-client langchain langchain-core langchain-openai
